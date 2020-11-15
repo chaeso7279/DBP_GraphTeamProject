@@ -24,8 +24,8 @@ public class DatabaseMgr {
 		m_stmt = m_connection.createStatement();
 		
 		// DB(그래프) 및 테이블(엣지,버텍스) 생성
-		m_stmt.executeUpdate("CREATE OR REPLACE DATABASE Graph_Team3");
-		m_stmt.executeUpdate("USE Graph_Team3");
+		m_stmt.executeUpdate("CREATE OR REPLACE DATABASE Graph_Team3;");
+		m_stmt.executeUpdate("USE Graph_Team3;");
 		m_stmt.executeUpdate("CREATE OR REPLACE TABLE Vertices (ID INTEGER PRIMARY KEY, Properties JSON);");
 		m_stmt.executeUpdate("CREATE OR REPLACE TABLE Edges (OutV INTEGER NOT NULL, InV INTEGER NOT NULL,	Label VARCHAR(50) NULL, Properties JSON, PRIMARY KEY (OutV, Inv), FOREIGN KEY (OutV) REFERENCES Vertices(ID), FOREIGN KEY (InV) REFERENCES Vertices(ID));");
 		

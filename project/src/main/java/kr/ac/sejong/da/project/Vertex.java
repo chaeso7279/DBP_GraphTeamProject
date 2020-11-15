@@ -1,5 +1,7 @@
 package kr.ac.sejong.da.project;
 
+import java.sql.SQLException;
+
 public interface Vertex extends Element {
 	/**
 	 * Return the edges incident to the vertex according to the provided direction
@@ -8,8 +10,9 @@ public interface Vertex extends Element {
 	 * @param direction the direction of the edges to retrieve
 	 * @param labels    the labels of the edges to retrieve
 	 * @return an iterable of incident edges
+	 * @throws SQLException 
 	 */
-	public Iterable<Edge> getEdges(Direction direction, String... labels);
+	public Iterable<Edge> getEdges(Direction direction, String... labels) throws SQLException;
 
 	/**
 	 * Return the vertices adjacent to the vertex according to the provided
@@ -20,7 +23,7 @@ public interface Vertex extends Element {
 	 * @param labels    the labels of the edges of the adjacent vertices
 	 * @return an iterable of adjacent vertices
 	 */
-	public Iterable<Vertex> getVertices(Direction direction, String... labels);
+	public Iterable<Vertex> getVertices(Direction direction, String... labels) throws SQLException;;
 
 	/**
 	 * Add a new outgoing edge from this vertex to the parameter vertex with
