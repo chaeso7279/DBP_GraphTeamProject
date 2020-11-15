@@ -1,5 +1,6 @@
 package kr.ac.sejong.da.project.impl;
 
+import java.sql.Statement;
 import java.util.Set;
 
 import kr.ac.sejong.da.project.Direction;
@@ -10,7 +11,12 @@ public class JVertex implements Vertex {
 
     //예: string 형태의 고유 아이디, '|' 사용 금지
     private String id;
-
+    
+    // 쿼리문 사용하기 위해 가져옴
+    private Statement m_stmt = null;
+    
+    public void setStatement(Statement stmt) { m_stmt = stmt; }
+    
     @Override
     public Iterable<Edge> getEdges(Direction direction, String... labels) {
         return null;

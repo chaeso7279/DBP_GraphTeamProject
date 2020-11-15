@@ -1,15 +1,23 @@
 package kr.ac.sejong.da.project.impl;
 
-import java.util.Iterator;
+import java.sql.SQLException;
 
-import kr.ac.sejong.da.project.Direction;
-import kr.ac.sejong.da.project.Edge;
-import kr.ac.sejong.da.project.Graph;
+import kr.ac.sejong.da.project.DatabaseMgr;
 import kr.ac.sejong.da.project.Vertex;
 
 public class App {
-    public static void main(String[] args){
-
+    public static void main(String[] args) throws SQLException{
+    	
+    	// DB 서버 연결
+    	DatabaseMgr dbMgr = DatabaseMgr.getInstance();
+    	dbMgr.getInstance().initialize("3307", "1111"); // 각자 사용하는 포트, 비번 작성
+    	
+    	// 예를 들어 버텍스에서 쿼리문 사용
+    	JVertex v = new JVertex();
+    	// dbMgr에서 이미 db서버와 연동된 Statement 사용함
+    	v.setStatement(dbMgr.getInstance().getStatement());
+    	
+    	
 		/*
 		 * Graph g = new JGraph(); Vertex v1 = g.addVertex("1"); Vertex v2 =
 		 * g.addVertex("2"); Vertex v3 = g.addVertex("3");
