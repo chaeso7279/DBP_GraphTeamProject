@@ -35,6 +35,8 @@ public class App {
 		 * 
 		 * v1.setProperty("x", 300); v1.setProperty("y", 300);
 		 */
-
+    	
+    	// DB 서버 종료, 쿼리문 작업 모두 마친 후, 마지막에 호출할 것
+    	dbMgr.getInstance().release();
     }
 }
