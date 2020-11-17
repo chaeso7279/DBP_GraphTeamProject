@@ -45,11 +45,11 @@ public class JVertex implements Vertex {
     		String outV = rs.getString(1);
     		String inV = rs.getString(2);
     		String label = rs.getString(3);
+    		String prop = rs.getString(4);
     		
-    		//String prop = rs.getObject(4); // JSON 가져오는 법 구글링 해보기, 파싱여부
     		Edge eTemp = new JEdge();
-    		//eTemp.set~~ 
-    		// outV, inV, label 등 설정해주는 함수 쭉쭉 추가
+    		((JEdge) eTemp).setID(outV, inV, label);
+    		//eTemp.setProperty(); // JSON 라이브러리 사용 여부
     		
     		result.add(eTemp);
     	}
@@ -62,7 +62,7 @@ public class JVertex implements Vertex {
         return null;
     }
 
-    @Override
+    @Override	// 현재 버텍스가 OutV, 인자가 InV에 해당하는 Edge 추가
     public Edge addEdge(String label, Vertex inVertex) {
         return null;
     }
