@@ -79,11 +79,10 @@ public class JVertex implements Vertex {
 
     @Override
     public void setProperty(String key, Object value) {
-
     }
 
     @Override
     public Object getId() {
-        return null;
+    	return null;
     }
 }
