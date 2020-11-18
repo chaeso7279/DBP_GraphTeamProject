@@ -45,7 +45,7 @@ public class JVertex implements Vertex {
     		String outV = rs.getString(1);
     		String inV = rs.getString(2);
     		String label = rs.getString(3);
-    		String prop = rs.getString(4);
+    		//String prop = rs.getString(4);
     		
     		Edge eTemp = new JEdge();
     		((JEdge) eTemp).setID(outV, inV, label);
