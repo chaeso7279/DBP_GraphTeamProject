@@ -1,5 +1,6 @@
 package kr.ac.sejong.da.project.impl;
 
+import kr.ac.sejong.da.project.DatabaseMgr;
 import kr.ac.sejong.da.project.Edge;
 import kr.ac.sejong.da.project.Graph;
 import kr.ac.sejong.da.project.Vertex;
@@ -8,31 +9,31 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-//null point에 대해 처리할것인지? 그런 상황은 없다고 가정하는지 궁금합니당
+
 
 public class JGraph implements Graph {
-    
 	// 쿼리문 사용하기 위해 가져옴
     private Statement m_stmt = null;
-    
     public void setStatement(Statement stmt) { m_stmt = stmt; }
     
 	public JGraph() {
 		super();
+    	if(m_stmt == null) { // Statement Null 이면 DBMgr에서 가져옴
+    		m_stmt = DatabaseMgr.getInstance().getStatement();
+    	}
 	}
 
-	@Override
+	@Override //db에 인자 id를 가진 vertex 추가 후 객체 반환
     public Vertex addVertex(String id) {
-		int intID = Integer.parseInt(id);
-		Vertex v = null;
-				
         try {
+        	int intID = Integer.parseInt(id);
         	m_stmt.executeUpdate("INSERT INTO vertices (ID) VALUE(" + intID + ");");
-          	//!!!!!vertex 변수 하나 선언해서 거기에 추가하고 return하는것인지..?-> 디자인 추후 논의!!!!!
-          	//!!!!!vertex class에 v.setID 메소드가 없는게 맞나요? (아래 모두 마찬가지)
+        	
+        	Vertex v = new JVertex();
+        	v.setProperty(id, "property"); //property는 json으로, 추후 논의 필요
+          	
           	return v;
         } catch (SQLException e) {
 			e.printStackTrace();
@@ -42,19 +43,18 @@ public class JGraph implements Graph {
 
     @Override
     public Vertex getVertex(String id) {
-    	ResultSet rs;
-    	int intID = Integer.parseInt(id);
-    	Vertex v = null;
-    	
 		try {
-			rs = m_stmt.executeQuery("SELECT * FROM vertices WHERE ID=" + intID);
-			//확인용으로  출력했던 코드
-			/*  while(rs.next()) {
-		    	Object vetID = rs.getObject(1);
-				System.out.println(vetID);
-			}*/
+			int intID = Integer.parseInt(id);
+			ResultSet rs = m_stmt.executeQuery("SELECT * FROM vertices WHERE ID=" + intID);
 			
-			//v 세팅 후 반환
+			Vertex v = new JVertex();
+			while(rs.next()) {
+				String ID = rs.getString(1); // id를 받아옴(인자 id 그대로 사용가능)
+				String prop = rs.getString(2); // {key:value} 쌍을 받아옴
+				
+				v.setProperty(ID, prop); 
+			}
+			
 			return v;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -63,26 +63,22 @@ public class JGraph implements Graph {
     	return null;
     }
 
-    @Override
+    @Override //현재 db에 존재하는 모든 vertex를 반환
     public Iterable<Vertex> getVertices() {
-    	//vertex 리스트를 생성하여 그 리스트를 가리키는 이터레이터 반환..?
-    	//!!!!!리스트를 메모리에 유지하지 말라 하셨는데 그 부분 논의
-    	List<Vertex> vertexData = new ArrayList<Vertex>();
-    	Iterator<Vertex> iter;
-    	ResultSet rs;
-    	Vertex v = null;
-   
     	try {
-    		rs = m_stmt.executeQuery("SELECT * FROM vertices;");
+    		ResultSet rs = m_stmt.executeQuery("SELECT * FROM vertices;");
+    		List<Vertex> vertexData = new ArrayList<Vertex>();
+  
 			while(rs.next()) {
-				//v 세팅 후 추가?
-				//v.setID(rs.getObject(1)); v.setProperty(rs.getObject(2));
+				Vertex v = new JVertex();
+				
+				String ID = rs.getString(1); // id를 받아옴(인자 id 그대로 사용가능)
+				String prop = rs.getString(2); // {key:value} 쌍을 받아옴
+				v.setProperty(ID, prop); 
+				
 				vertexData.add(v);
-				//System.out.print(rs.getObject(1)); //확인용 코드
 			}
-			iter = vertexData.iterator();
-			
-			return (Iterable<Vertex>) iter;
+			return vertexData;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -90,8 +86,28 @@ public class JGraph implements Graph {
         return null;
     }
 
-    @Override
+    @Override //현재 db에 존재하는 vertex중, 특정 key와 value를 가지는 vertex 반환
     public Iterable<Vertex> getVertices(String key, Object value) {
+    	try {
+    		ResultSet rs = m_stmt.executeQuery("SELECT * FROM vertices WHERE ID="
+    				+ key + "AND Properties=" + value + ";");
+    		
+    		List<Vertex> vertexData = new ArrayList<Vertex>();
+  
+			while(rs.next()) {
+				Vertex v = new JVertex();
+				
+				String id = (String) rs.getObject(1);
+				Object prop = rs.getObject(2);
+				v.setProperty(id, prop);
+
+				vertexData.add(v);
+				//System.out.print(rs.getObject(1)); //확인용 코드
+			}
+			return vertexData;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
         return null;
     }
 
@@ -105,7 +121,7 @@ public class JGraph implements Graph {
     	try {
     		m_stmt.executeUpdate("INSERT INTO edges (OutV, InV, Label) "
 					+ "VALUE(" + outID + inID + label + ");");
-			//e.setID 해서 반환
+			//e.setProperty 해서 반환
 			return edge;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -125,8 +141,7 @@ public class JGraph implements Graph {
 			rs = m_stmt.executeQuery("SELECT * FROM edges "
 					+ "WHERE OutV=" + outID + " and " + "InV=" + inID + " and " + "label=" + label);
 			
-			//edge 세팅 후 반환 -> !!!!!vertex와 같은 이슈 존재
-			//edge.setID();
+			//edge.setProperty 해서 반환
 			return edge;
 		} catch (SQLException e) {
 			e.printStackTrace();
