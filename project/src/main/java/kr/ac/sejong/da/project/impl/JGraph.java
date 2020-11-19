@@ -148,47 +148,12 @@ public class JGraph implements Graph {
     }
 
     @Override
-    // 그래프내의 모든 엣지를 반환하는 메소드
     public Iterable<Edge> getEdges() {
-    	// List 컬렉션에 모든 엣지들을 추가해서 컬렉션자체를 리턴 (메인에서 iterator 생성)
-    	List<Edge> edgeData = new ArrayList<Edge>();
-    	ResultSet rs;
-    	
-    	try {
-			rs = m_stmt.executeQuery("SELECT * FROM edges;");
-			while(rs.next()) {
-				// JEdge객체를 생성하고, 고유ID를 setting 후에 컬렉션에 붙이기
-				// 질문 : property 처리는 어떻게 해야하나요..
-				JEdge e = new JEdge();
-				e.setID(rs.getString(1), rs.getString(2), rs.getString(3));
-				edgeData.add(e);
-			}
-		} catch (SQLException e1) {
-			e1.printStackTrace();
-		}
         return null;
     }
 
     @Override
     public Iterable<Edge> getEdges(String key, Object value) {
-    	List<Edge> edgeData = new ArrayList<Edge>();
-    	edgeData=null;
-    	try {
-    		// 제이슨 라이브러리 사용가능?
-			ResultSet rs = m_stmt.executeQuery("select json_value(properties,'$."+key+"') from edges;");
-			while(rs.next()) {
-				String str = rs.getString(1);
-				if(value.equals(str)) {
-					JEdge e = new JEdge();
-					//edge setting?
-					edgeData.add(e);
-				}
-			}
-			return edgeData;
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
         return null;
     }
 }
