@@ -11,6 +11,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class JGraph implements Graph {
 	// 쿼리문 사용하기 위해 가져옴
     private Statement m_stmt = null;
@@ -24,14 +25,17 @@ public class JGraph implements Graph {
 	}
 
 	@Override //db에 인자 id를 가진 vertex 추가 후 객체 반환
-    public Vertex addVertex(String id) {
+    public Vertex addVertex(String id) { //손혜원
         try {
         	int intID = Integer.parseInt(id);
         	m_stmt.executeUpdate("INSERT INTO vertices (ID) VALUE(" + intID + ");");
         	
-        	Vertex v = new JVertex();
-        	v.setProperty(id, "property"); //property는 json으로, 추후 논의 필요
-          	
+        	JVertex v = new JVertex();
+        	v.setID(id);
+        	
+        	//이슈1: addVertex만 호출시 setProperty 함수의 사용->null로 할것인지 호출 자체를 하지 않을 것인지?
+        	//v.setProperty(key, value);        ㄴ사용한다면 이 함수 구현할 것
+        	
           	return v;
         } catch (SQLException e) {
 			e.printStackTrace();
@@ -39,19 +43,20 @@ public class JGraph implements Graph {
 		return null;
     }
 
-    @Override
-    public Vertex getVertex(String id) {
+    @Override //db에서 인자 id를 가진 vertex를 찾아 객체 반환
+    public Vertex getVertex(String id) { //손혜원
 		try {
 			int intID = Integer.parseInt(id);
 			ResultSet rs = m_stmt.executeQuery("SELECT * FROM vertices WHERE ID=" + intID);
 			
-			Vertex v = new JVertex();
+			JVertex v = new JVertex();
 			while(rs.next()) {
-				String ID = rs.getString(1); // id를 받아옴(인자 id 그대로 사용가능)
-				String prop = rs.getString(2); // {key:value} 쌍을 받아옴
+				String key = rs.getString(1); // {key:value} 쌍을 받아옴
+				Object value = rs.getObject(2); 
 				
-				v.setProperty(ID, prop); 
-			}
+				v.setID(id);
+				v.setProperty(key, value);
+	          }
 			
 			return v;
 		} catch (SQLException e) {
@@ -62,18 +67,19 @@ public class JGraph implements Graph {
     }
 
     @Override //현재 db에 존재하는 모든 vertex를 반환
-    public Iterable<Vertex> getVertices() {
+    public Iterable<Vertex> getVertices() { //손혜원
     	try {
     		ResultSet rs = m_stmt.executeQuery("SELECT * FROM vertices;");
     		List<Vertex> vertexData = new ArrayList<Vertex>();
   
 			while(rs.next()) {
-				Vertex v = new JVertex();
+				JVertex v = new JVertex();
 				
-				String ID = rs.getString(1); // id를 받아옴(인자 id 그대로 사용가능)
-				String prop = rs.getString(2); // {key:value} 쌍을 받아옴
-				v.setProperty(ID, prop); 
+				String key = rs.getString(1); // {key:value} 쌍을 받아옴
+				Object value = rs.getObject(2); 
 				
+				//v.setID(id); //이슈2: id세팅 필요할지
+				v.setProperty(key, value);	
 				vertexData.add(v);
 			}
 			return vertexData;
@@ -93,14 +99,14 @@ public class JGraph implements Graph {
     		List<Vertex> vertexData = new ArrayList<Vertex>();
   
 			while(rs.next()) {
-				Vertex v = new JVertex();
+				JVertex v = new JVertex();
 				
-				String id = (String) rs.getObject(1);
-				Object prop = rs.getObject(2);
-				v.setProperty(id, prop);
-
+				String k = rs.getString(1); // {key:value} 쌍을 받아옴
+				Object val = rs.getObject(2); 
+				
+				//v.setID(id);
+				v.setProperty(k, val);
 				vertexData.add(v);
-				//System.out.print(rs.getObject(1)); //확인용 코드
 			}
 			return vertexData;
 		} catch (SQLException e) {
@@ -148,12 +154,47 @@ public class JGraph implements Graph {
     }
 
     @Override
+    // 그래프내의 모든 엣지를 반환하는 메소드
     public Iterable<Edge> getEdges() {
+    	// List 컬렉션에 모든 엣지들을 추가해서 컬렉션자체를 리턴 (메인에서 iterator 생성)
+    	List<Edge> edgeData = new ArrayList<Edge>();
+    	ResultSet rs;
+    	
+    	try {
+			rs = m_stmt.executeQuery("SELECT * FROM edges;");
+			while(rs.next()) {
+				// JEdge객체를 생성하고, 고유ID를 setting 후에 컬렉션에 붙이기
+				// 질문 : property 처리는 어떻게 해야하나요..
+				JEdge e = new JEdge();
+				e.setID(rs.getString(1), rs.getString(2), rs.getString(3));
+				edgeData.add(e);
+			}
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
         return null;
     }
 
     @Override
     public Iterable<Edge> getEdges(String key, Object value) {
+    	List<Edge> edgeData = new ArrayList<Edge>();
+    	edgeData=null;
+    	try {
+    		// 제이슨 라이브러리 사용가능?
+			ResultSet rs = m_stmt.executeQuery("select json_value(properties,'$."+key+"') from edges;");
+			while(rs.next()) {
+				String str = rs.getString(1);
+				if(value.equals(str)) {
+					JEdge e = new JEdge();
+					//edge setting?
+					edgeData.add(e);
+				}
+			}
+			return edgeData;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         return null;
     }
 }
