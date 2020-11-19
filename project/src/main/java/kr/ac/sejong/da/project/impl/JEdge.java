@@ -35,19 +35,27 @@ public class JEdge implements Edge {
 	@Override // Vertices테이블에서 하나의 vertex를 가져오는거 같은데 direction을 어떻게 쿼리문을 가져올지 몰라서 일단은 select *
 	// from vertices; 를씀
 	public Vertex getVertex(Direction direction) throws SQLException { // Vertex가져와서 반환하는 메소드
-		
 		Vertex vertex = null;	// 없으면 NULL
-		ResultSet rs = m_stmt.executeQuery("SELECT * FROM Vertices;");
-		// Vertices테이블에서 하나의 vertex를 가져오는거 같은데 direction을 어떻게 쿼리문을 가져올지 몰라서 일단은 select *
-		// from vertices; 를씀
-
-		Object ID = rs.getObject("ID");
-		Object Properties = rs.getObject("Properties");
+		
+		String[] arr = id.split("|"); // arr[0]: outID, arr[1]: label, arr[2]: inID
+		
+		String sql = "SELECT * FROM Vertices WHERE ID = ";
+		if(direction == Direction.IN)
+			sql += arr[2];
+		else if(direction == Direction.OUT)
+			sql += arr[0];
+		
+		ResultSet rs = m_stmt.executeQuery(sql);
+		
+		String ID = rs.getString("ID");
+		//Object Properties = rs.getObject("Properties");
 
 		if (ID == null)
 			return null;
-		vertex.setProperty("ID", ID);
-		vertex.setProperty("Properties", Properties);
+		
+		vertex = new JVertex();
+		((JVertex) vertex).setID(ID);
+		//vertex.setProperty("Properties", Properties);
 
 		return vertex;
 	}

@@ -20,11 +20,16 @@ public class JVertex implements Vertex {
     // 쿼리문 사용하기 위해 가져옴
 	private Statement m_stmt = null;
     
+	// setter
     public void setStatement(Statement stmt) { m_stmt = stmt; }
+    public void setID(String id) { m_id = id; }
+    
+    // getter
+    @Override
+    public Object getId() { return m_id; }
     
     @Override	// 현재 버텍스가 인자 방향(Out,In)에 해당하는 Edges 모두 가져옴
     public Iterable<Edge> getEdges(Direction direction, String... labels) throws SQLException {
-    	//int id = Integer.parseInt(m_id);
     	if(m_stmt == null) // Statement Null 이면 DBMgr에서 가져옴
     		m_stmt = DatabaseMgr.getInstance().getStatement();
     	
@@ -42,6 +47,7 @@ public class JVertex implements Vertex {
     	List<Edge> result = new ArrayList<Edge>();
     	
     	while(rs.next()) {
+    		// 가져온 결과가 null 일 경우 처리 해줘야함(인덱싱?)
     		String outV = rs.getString(1);
     		String inV = rs.getString(2);
     		String label = rs.getString(3);
@@ -54,17 +60,68 @@ public class JVertex implements Vertex {
     		result.add(eTemp);
     	}
     	
+    	if(result.isEmpty()) // 결과가 없을 경우, null 반환
+    		return null;
+    	
         return result;
     }
 
-    @Override	// 해당 방향(Out,In) 으로 연결된 Vertex 모두 가져옴
-    public Iterable<Vertex> getVertices(Direction direction, String... labels) { 
-        return null;
+    @Override	// 현재 버텍스와 해당 방향(Out,In) 으로 연결된 Vertex 모두 가져옴
+    public Iterable<Vertex> getVertices(Direction direction, String... labels) throws SQLException {
+    	if(m_stmt == null) // Statement Null 이면 DBMgr에서 가져옴
+    		m_stmt = DatabaseMgr.getInstance().getStatement();
+    	
+    	String sql = "";
+    	if(direction == Direction.IN) 
+    		sql = "SELECT OutV FROM Edges WHERE InV " + m_id + ";";
+    	else if(direction == Direction.OUT)
+    		sql = "SELECT InV FROM Edges WHERE OutV " + m_id + ";";
+		/*
+		 * else // BOTH // BOTH 일 경우 생각해보기..
+		 */    	
+		
+    	ResultSet rs = m_stmt.executeQuery(sql);
+    	
+    	// 결과 담을 리스트 생성
+    	List<Vertex> result = new ArrayList<Vertex>();
+    	
+    	while(rs.next()) {
+    		// 가져온 결과가 null 일 경우 처리 해줘야함(인덱싱?)
+    		String id = rs.getString(1);
+    		//String prop = rs.getString(2);
+    		
+    		Vertex vTemp = new JVertex();
+    		((JVertex) vTemp).setID(id);
+    		
+    		//vTemp.setProperty(); // JSON 라이브러리 사용 여부
+    		
+    		result.add(vTemp);
+    	}
+    	
+    	if(result.isEmpty()) // 결과가 없을 경우, null 반환
+    		return null;
+    	
+    	return result;
     }
 
     @Override	// 현재 버텍스가 OutV, 인자가 InV에 해당하는 Edge 추가
-    public Edge addEdge(String label, Vertex inVertex) {
-        return null;
+    public Edge addEdge(String label, Vertex inVertex) throws SQLException {
+    	if(m_stmt == null) // Statement Null 이면 DBMgr에서 가져옴
+    		m_stmt = DatabaseMgr.getInstance().getStatement();
+    	
+    	int OutID = Integer.parseInt(m_id);
+    	int InID = Integer.parseInt((String) inVertex.getId());
+    	
+    	// DB 삽입
+    	String sql = "INSERT INTO Edges (OutV, InV, Label) VALUES (" + OutID + "," + InID + "," + label + ");";
+    	if(0 == m_stmt.executeUpdate(sql)) // 삽입 오류 발생 시(중복 등),
+    		return null; 					// null 반환
+    	
+    	// Edge 객체 생성
+    	Edge eTemp = new JEdge();
+    	((JEdge) eTemp).setID(m_id, (String) inVertex.getId(), label);
+    	
+        return eTemp;
     }
 
     @Override
@@ -77,13 +134,15 @@ public class JVertex implements Vertex {
         return null;
     }
 
-    @Override
-    public void setProperty(String key, Object value) {
-
-    }
-
-    @Override
-    public Object getId() {
-        return null;
+    @Override	// 기존에 있던 Property에 추가하는 형태? 초기화하고 Set하는 형태?
+    public void setProperty(String key, Object value) throws SQLException {
+    	if(m_stmt == null) // Statement Null 이면 DBMgr에서 가져옴
+    		m_stmt = DatabaseMgr.getInstance().getStatement();
+    	
+    	int numID = Integer.parseInt(m_id);
+    	String strJson = "{ \"" + key + "\" : " + value + "\"}"; 
+    	
+    	m_stmt.executeUpdate("UPDATE Vertices SET Properties ('"+ strJson + "') "
+    			+ "WHERE ID = " + numID + ";");
     }
 }

@@ -11,8 +11,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
 public class JGraph implements Graph {
 	// 쿼리문 사용하기 위해 가져옴
     private Statement m_stmt = null;

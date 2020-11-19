@@ -32,6 +32,7 @@ public interface Vertex extends Element {
 	 * @param label    the label of the edge
 	 * @param inVertex the vertex to connect to with an incoming edge
 	 * @return the newly created edge
+	 * @throws SQLException 
 	 */
-	public Edge addEdge(String label, Vertex inVertex);
+	public Edge addEdge(String label, Vertex inVertex) throws SQLException;
 }
