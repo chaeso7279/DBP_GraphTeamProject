@@ -12,13 +12,13 @@ public class DatabaseMgr {
 	Statement m_stmt = null;
 	
 	// getter 
-	public Connection getConnection() { return m_connection;}
-	public Statement getStatement() { return m_stmt; }
+	public Connection getConnection() { return m_connection;}	// 채수화
+	public Statement getStatement() { return m_stmt; }			// 채수화
 	
 	// setter
 	
 	// 초기화 함수, DB 서버 연결
-	public void initialize(String port, String pswd) throws SQLException {
+	public void initialize(String port, String pswd) throws SQLException {	// 채수화
 		m_connection = 
 				DriverManager.getConnection("jdbc:mariadb://localhost:" + port, "root", pswd);
 		m_stmt = m_connection.createStatement();
@@ -32,7 +32,7 @@ public class DatabaseMgr {
 	}
 	
 	// 종료 함수, DB 서버 연결 종료
-	public void release() throws SQLException {
+	public void release() throws SQLException {	// 채수화
 		if(m_stmt != null) m_stmt.close();
 		if(m_connection != null) m_connection.close();
 	}
@@ -42,7 +42,7 @@ public class DatabaseMgr {
 	
 	private DatabaseMgr() {};
 	
-	public static DatabaseMgr getInstance() {
+	public static DatabaseMgr getInstance() {	// 채수화
 		if(m_instance == null) 
 			m_instance = new DatabaseMgr();
 			

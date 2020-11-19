@@ -28,7 +28,7 @@ public class JEdge implements Edge {
 	// setter
 	public void setStatement(Statement stmt) { m_stmt = stmt; }
 	
-	public void setID(String outV, String inV, String label) {
+	public void setID(String outV, String inV, String label) {	// 채수화
 		id = outV + "|" + label + "|" + inV;
 	}
 
