@@ -11,6 +11,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONArray;
+
 
 public class JGraph implements Graph {
 	// 쿼리문 사용하기 위해 가져옴
@@ -51,8 +53,11 @@ public class JGraph implements Graph {
 			
 			JVertex v = new JVertex();
 			while(rs.next()) {
-				String key = rs.getString(1); // {key:value} 쌍을 받아옴
-				Object value = rs.getObject(2); 
+				Object line = rs.getObject(2); 
+				JSONArray arr = new JSONArray(line);
+				
+				String key = arr.getString(0); //한 쌍일때를 상정->보완 필요
+				Object value = arr.get(1);
 				
 				v.setID(id);
 				v.setProperty(key, value);
@@ -74,13 +79,17 @@ public class JGraph implements Graph {
   
 			while(rs.next()) {
 				JVertex v = new JVertex();
+				String id = rs.getString(1);
+				Object line = rs.getObject(2); 
+				JSONArray arr = new JSONArray(line);
 				
-				String key = rs.getString(1); // {key:value} 쌍을 받아옴
-				Object value = rs.getObject(2); 
+				String key = arr.getString(0); //한 쌍일때를 상정->보완 필요
+				Object value = arr.get(1);
 				
-				//v.setID(id); //이슈2: id세팅 필요할지
+				v.setID(id);
 				v.setProperty(key, value);	
 				vertexData.add(v);
+				System.out.println(v.getId());
 			}
 			return vertexData;
 		} catch (SQLException e) {
@@ -92,21 +101,26 @@ public class JGraph implements Graph {
 
     @Override //현재 db에 존재하는 vertex중, 특정 key와 value를 가지는 vertex 반환
     public Iterable<Vertex> getVertices(String key, Object value) {
+    	String strJson = "{ \"" + key + "\" : " + value + "\"}"; 
+    	
     	try {
-    		ResultSet rs = m_stmt.executeQuery("SELECT * FROM vertices WHERE ID="
-    				+ key + "AND Properties=" + value + ";");
+    		ResultSet rs = m_stmt.executeQuery("SELECT * FROM vertices WHERE Properties=" + strJson + ";");
     		
     		List<Vertex> vertexData = new ArrayList<Vertex>();
   
 			while(rs.next()) {
 				JVertex v = new JVertex();
+				String id = rs.getString(1);
+				Object line = rs.getObject(2); 
+				JSONArray arr = new JSONArray(line);
 				
-				String k = rs.getString(1); // {key:value} 쌍을 받아옴
-				Object val = rs.getObject(2); 
-				
-				//v.setID(id);
+				String k = arr.getString(0); //한 쌍일때를 상정->보완 필요
+				Object val = arr.get(1);
+		
+				v.setID(id);
 				v.setProperty(k, val);
 				vertexData.add(v);
+				System.out.println(v.getId());
 			}
 			return vertexData;
 		} catch (SQLException e) {
