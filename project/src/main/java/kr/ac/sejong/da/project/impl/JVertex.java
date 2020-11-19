@@ -26,11 +26,10 @@ public class JVertex implements Vertex {
     
     // getter
     @Override
-    public Object getID() { return m_id; }
+    public Object getId() { return m_id; }
     
     @Override	// 현재 버텍스가 인자 방향(Out,In)에 해당하는 Edges 모두 가져옴
     public Iterable<Edge> getEdges(Direction direction, String... labels) throws SQLException {
-    	//int id = Integer.parseInt(m_id);
     	if(m_stmt == null) // Statement Null 이면 DBMgr에서 가져옴
     		m_stmt = DatabaseMgr.getInstance().getStatement();
     	
@@ -137,8 +136,6 @@ public class JVertex implements Vertex {
 
     @Override	// 기존에 있던 Property에 추가하는 형태? 초기화하고 Set하는 형태?
     public void setProperty(String key, Object value) throws SQLException {
-    	// UPDATE 구문 사용
-    	// UPDATE Vertices SET Properties = "" WHERE ID = "";
     	if(m_stmt == null) // Statement Null 이면 DBMgr에서 가져옴
     		m_stmt = DatabaseMgr.getInstance().getStatement();
     	
