@@ -4,8 +4,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
+import org.json.JSONObject;
 
 import kr.ac.sejong.da.project.DatabaseMgr;
 import kr.ac.sejong.da.project.Direction;
@@ -66,11 +69,20 @@ public class JVertex implements Vertex {
     		String outV = rs.getString(1);
     		String inV = rs.getString(2);
     		String label = rs.getString(3);
-    		//String prop = rs.getString(4);
+    		String prop = rs.getString(4);
     		
     		Edge eTemp = new JEdge();
     		((JEdge) eTemp).setID(outV, inV, label);
-    		//eTemp.setProperty(); // JSON 라이브러리 사용 여부
+    		
+    		if(prop != null) {	// property가 null 아닐 때
+    			JSONObject jObj = new JSONObject(prop);	// 라이브러리 사용
+    			Iterator<String> iter = jObj.keys();
+    			
+    			while(iter.hasNext()) {
+    				String key = (String)iter.next();
+    				eTemp.setProperty(key, jObj.get(key));
+    			}	
+    		}
     		
     		result.add(eTemp);
     	}
@@ -110,13 +122,21 @@ public class JVertex implements Vertex {
     	while(rs.next()) {
     		// 가져온 결과가 null 일 경우 처리 해줘야함(인덱싱?)
     		String id = rs.getString(1);
-    		//String prop = rs.getString(2);
+    		String prop = rs.getString(2);
     		
     		Vertex vTemp = new JVertex();
     		((JVertex) vTemp).setID(id);
     		
-    		//vTemp.setProperty(); // JSON 라이브러리 사용 여부
-    		
+    		if(prop != null) {	// property가 null 아닐 때
+    			JSONObject jObj = new JSONObject(prop);	// 라이브러리 사용
+    			Iterator<String> iter = jObj.keys();
+    			
+    			while(iter.hasNext()) {
+    				String key = (String)iter.next();
+    				vTemp.setProperty(key, jObj.get(key));
+    			}	
+    		}
+    	
     		result.add(vTemp);
     	}
     	
@@ -155,6 +175,13 @@ public class JVertex implements Vertex {
 
     @Override	// 기존 property 유지하면서 추가, key 중복 시 value 업데이트
     public void setProperty(String key, Object value) throws SQLException {	// 채수화
+    	// 1. 기존 property 가져오기
+    	// 2. 라이브러리 이용, jsonObject로 파싱하기
+    	// 3. put 함수 이용해 key, value 추가 또는 value 값 수정
+    	// 4. String 으로 변환하기
+    	// 5. SQL 구문으로 DB에 넣기
+    	
+    	
     	int numID = Integer.parseInt(m_id);
     	String strJson = "{ \"" + key + "\" : " + value + "\"}"; 
     	
