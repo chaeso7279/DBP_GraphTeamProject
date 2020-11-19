@@ -61,15 +61,10 @@ public class JEdge implements Edge {
 	}
 
 	@Override
-	public String getLabel() throws SQLException { // db에서 Label을 select label from edges; 가져오는 테이블
-		ResultSet rs = m_stmt.executeQuery("SELECT Label FROM Edges;"); // edges테이블에서 label을 반환하는데 label이 여러개가 있는데 왜
-																		// string배열을 안쓰고 그냥 string으로 반환하냐? 의문점..
-		String label = rs.getString("Label");
-
-		if (label == null)
-			return null;
-
-		return label;
+	public String getLabel() throws SQLException { 
+		String[] arr = id.split("|"); // arr[0]: outID, arr[1]: label, arr[2]: inID
+		
+		return arr[1];
 	}
 
 	@Override // property가 테이블에 다 존재 하는데 일단은 뭔지 몰라서 edges에만 넣어둠
@@ -112,7 +107,7 @@ public class JEdge implements Edge {
 
 	}
 
-	@Override // 뭔지 몰라서 this.id로 반환
+	@Override // this.id로 반환
 	public Object getId() {
 		return this.id;
 	}
