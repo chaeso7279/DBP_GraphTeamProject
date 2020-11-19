@@ -56,8 +56,8 @@ public class JGraph implements Graph {
 				Object line = rs.getObject(2); 
 				JSONArray arr = new JSONArray(line);
 				
-				String key = arr.getString(0); //한 쌍일때를 상정->보완 필요
-				Object value = arr.get(1);
+				String key = arr.getString(1); //한 쌍일때를 상정->보완 필요
+				Object value = arr.get(3);
 				
 				v.setID(id);
 				v.setProperty(key, value);
@@ -83,8 +83,8 @@ public class JGraph implements Graph {
 				Object line = rs.getObject(2); 
 				JSONArray arr = new JSONArray(line);
 				
-				String key = arr.getString(0); //한 쌍일때를 상정->보완 필요
-				Object value = arr.get(1);
+				String key = arr.getString(1); //한 쌍일때를 상정->보완 필요
+				Object value = arr.get(3);
 				
 				v.setID(id);
 				v.setProperty(key, value);	
@@ -100,23 +100,19 @@ public class JGraph implements Graph {
     }
 
     @Override //현재 db에 존재하는 vertex중, 특정 key와 value를 가지는 vertex 반환
-    public Iterable<Vertex> getVertices(String key, Object value) {
-    	String strJson = "{ \"" + key + "\" : " + value + "\"}"; 
+    public Iterable<Vertex> getVertices(String key, Object value) { //손혜원
     	
     	try {
-    		ResultSet rs = m_stmt.executeQuery("SELECT * FROM vertices WHERE Properties=" + strJson + ";");
-    		
+    		ResultSet rs = m_stmt.executeQuery("SELECT ID, JSON_VALUE(Properties,'$."+key+"'),  "
+    				+ " JSON_VALUE(Properties,'$." + value + "')" + "FROM vertices;");
     		List<Vertex> vertexData = new ArrayList<Vertex>();
   
 			while(rs.next()) {
 				JVertex v = new JVertex();
 				String id = rs.getString(1);
-				Object line = rs.getObject(2); 
-				JSONArray arr = new JSONArray(line);
+				String k = rs.getString(2); //자료형이 나눠져 반환되므로
+				Object val = rs.getObject(3);
 				
-				String k = arr.getString(0); //한 쌍일때를 상정->보완 필요
-				Object val = arr.get(1);
-		
 				v.setID(id);
 				v.setProperty(k, val);
 				vertexData.add(v);
