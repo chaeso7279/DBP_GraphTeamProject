@@ -57,8 +57,17 @@ public class JVertex implements Vertex {
         return result;
     }
 
-    @Override	// 해당 방향(Out,In) 으로 연결된 Vertex 모두 가져옴
-    public Iterable<Vertex> getVertices(Direction direction, String... labels) { 
+    @Override	// 현재 버텍스와 해당 방향(Out,In) 으로 연결된 Vertex 모두 가져옴
+    public Iterable<Vertex> getVertices(Direction direction, String... labels) {
+    	if(m_stmt == null) // Statement Null 이면 DBMgr에서 가져옴
+    		m_stmt = DatabaseMgr.getInstance().getStatement();
+    	
+    	String sql;
+    	if(direction == Direction.IN) 
+    		sql = "SELECT OutV FROM Edges WHERE InV " + m_id + ";";
+    	else if(direction == Direction.OUT)
+    		sql = "SELECT InV FROM Edges WHERE OutV " + m_id + ";";
+    	
         return null;
     }
 
