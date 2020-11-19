@@ -115,9 +115,8 @@ public class JVertex implements Vertex {
     	
     	// DB 삽입
     	String sql = "INSERT INTO Edges (OutV, InV, Label) VALUES (" + OutID + "," + InID + "," + label + ");";
-    	m_stmt.executeUpdate(sql);
-    	// 만약 삽입 오류 발생(중복 삽입 등) 시 상황 추가 해줘야함!!
-    	
+    	if(0 == m_stmt.executeUpdate(sql)) // 삽입 오류 발생 시(중복 등),
+    		return null; 					// null 반환
     	
     	// Edge 객체 생성
     	Edge eTemp = new JEdge();
