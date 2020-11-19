@@ -136,8 +136,17 @@ public class JVertex implements Vertex {
         return null;
     }
 
-    @Override
-    public void setProperty(String key, Object value) {
-
+    @Override	// 기존에 있던 Property에 추가하는 형태? 초기화하고 Set하는 형태?
+    public void setProperty(String key, Object value) throws SQLException {
+    	// UPDATE 구문 사용
+    	// UPDATE Vertices SET Properties = "" WHERE ID = "";
+    	if(m_stmt == null) // Statement Null 이면 DBMgr에서 가져옴
+    		m_stmt = DatabaseMgr.getInstance().getStatement();
+    	
+    	int numID = Integer.parseInt(m_id);
+    	String strJson = "{ \"" + key + "\" : " + value + "\"}"; 
+    	
+    	m_stmt.executeUpdate("UPDATE Vertices SET Properties ('"+ strJson + "') "
+    			+ "WHERE ID = " + numID + ";");
     }
 }
