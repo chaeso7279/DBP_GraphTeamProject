@@ -30,13 +30,10 @@ public class JGraph implements Graph {
     public Vertex addVertex(String id) { //손혜원
         try {
         	int intID = Integer.parseInt(id);
-        	m_stmt.executeUpdate("INSERT INTO vertices (ID) VALUE(" + intID + ");");
+        	m_stmt.executeUpdate("INSERT INTO vertices SET ID=" + intID + ";");
         	
         	JVertex v = new JVertex();
         	v.setID(id);
-        	
-        	//이슈1: addVertex만 호출시 setProperty 함수의 사용->null로 할것인지 호출 자체를 하지 않을 것인지?
-        	//v.setProperty(key, value);        ㄴ사용한다면 이 함수 구현할 것
         	
           	return v;
         } catch (SQLException e) {
@@ -106,7 +103,7 @@ public class JGraph implements Graph {
     		ResultSet rs = m_stmt.executeQuery("SELECT ID, JSON_VALUE(Properties,'$."+key+"'),  "
     				+ " JSON_VALUE(Properties,'$." + value + "')" + "FROM vertices;");
     		List<Vertex> vertexData = new ArrayList<Vertex>();
-  
+    		
 			while(rs.next()) {
 				JVertex v = new JVertex();
 				String id = rs.getString(1);
