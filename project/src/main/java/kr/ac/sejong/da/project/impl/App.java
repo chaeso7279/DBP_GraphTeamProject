@@ -34,11 +34,11 @@ public class App {
             System.out.println(e);
         }
         
-        Iterator<Edge> ei2 = v2.getEdges(Direction.IN, "label").iterator();     //결과는 null
-        while(ei2.hasNext()){
-            Edge e = ei2.next();
-            System.out.println(e);
-        }
+//        Iterator<Edge> ei2 = v2.getEdges(Direction.IN, "label").iterator();     //결과는 null
+//        while(ei2.hasNext()){
+//            Edge e = ei2.next();
+//            System.out.println(e);
+//        }
 
         System.out.println(e1.getVertex(Direction.OUT));    //결과는   v2
         System.out.println(e1.getVertex(Direction.IN));    //결과는   v1

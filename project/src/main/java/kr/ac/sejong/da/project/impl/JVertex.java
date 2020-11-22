@@ -83,7 +83,6 @@ public class JVertex implements Vertex {
     				eTemp.setProperty(key, jObj.get(key));
     			}	
     		}
-    		
     		result.add(eTemp);
     	}
     	
@@ -136,7 +135,6 @@ public class JVertex implements Vertex {
     				vTemp.setProperty(key, jObj.get(key));
     			}	
     		}
-    	
     		result.add(vTemp);
     	}
     	
@@ -176,9 +174,9 @@ public class JVertex implements Vertex {
     @Override	// 기존 property 유지하면서 추가, key 중복 시 value 업데이트
     public void setProperty(String key, Object value) throws SQLException {	// 채수화
     	// 1. 기존 property 가져오기
-    	// 2. 라이브러리 이용, jsonObject로 파싱하기
-    	// 3. put 함수 이용해 key, value 추가 또는 value 값 수정
-    	// 4. String 으로 변환하기
+    	// 2. 라이브러리 이용 => jsonObject로 파싱하기
+    	// 3. jsonObject의 put 함수 이용해 key, value 추가 또는 value 값 수정
+    	// 4. 라이브러리 이용 => String 으로 변환하기
     	// 5. SQL 구문으로 DB에 넣기
     	
     	

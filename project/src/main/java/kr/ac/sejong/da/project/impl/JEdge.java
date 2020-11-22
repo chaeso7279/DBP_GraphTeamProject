@@ -22,7 +22,10 @@ public class JEdge implements Edge {
 	private Statement m_stmt = null;
 	
 	JEdge() {
-		m_connection = DatabaseMgr.getInstance().getConnection();
+		if(m_connection == null)
+			m_connection = DatabaseMgr.getInstance().getConnection();
+		if(m_stmt == null)
+			m_stmt = DatabaseMgr.getInstance().getStatement();
 	}
 	
 	// setter
