@@ -40,11 +40,13 @@ public class App {
 //            System.out.println(e);
 //        }
 
-        System.out.println(e1.getVertex(Direction.OUT));    //결과는   v2
-        System.out.println(e1.getVertex(Direction.IN));    //결과는   v1
+        // 11.23 확인 결과 터짐 
+        // System.out.println(e1.getVertex(Direction.OUT));    //결과는   v2
+        // System.out.println(e1.getVertex(Direction.IN));    //결과는   v1
 
         v1.setProperty("x", 300);
         v1.setProperty("y", 300);
+        v1.setProperty("y", 200);
 		
 		// DB 서버 종료, 쿼리문 작업 모두 마친 후, 마지막에 호출할 것
 		dbMgr.release();

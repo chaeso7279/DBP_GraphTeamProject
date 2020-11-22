@@ -173,17 +173,34 @@ public class JVertex implements Vertex {
 
     @Override	// 기존 property 유지하면서 추가, key 중복 시 value 업데이트
     public void setProperty(String key, Object value) throws SQLException {	// 채수화
+
     	// 1. 기존 property 가져오기
+    	String sql = "SELECT Properties FROM Vertices WHERE ID = " + m_id + " AND NOT Properties IS NULL;"; // NULL 제외
+    	ResultSet rs = m_stmt.executeQuery(sql);
+    	
     	// 2. 라이브러리 이용 => jsonObject로 파싱하기
+    	JSONObject jObj = null;
+    	if(!rs.next())		 			// 기존 Property 없음(처음 작성)
+    		jObj = new JSONObject();
+    	else							// 기존 Property를 JSON Object로 만듦
+    		jObj = new JSONObject(rs.getString(1));
+    	
     	// 3. jsonObject의 put 함수 이용해 key, value 추가 또는 value 값 수정
-    	// 4. 라이브러리 이용 => String 으로 변환하기
+    	Iterator<String> iter = jObj.keys(); // key 중복 검사
+		while(iter.hasNext()) {
+			if(iter.next() == key) {	// 기존 property에 추가하려는 key가 이미 존재할 때,
+				jObj.remove(key);		// 삭제하고, 다시 추가해줌 
+				break;					// 단, 이 경우 property 내 순서 변경발생 -> 삭제하고 뒤에 추가되면서	
+			}							
+		}
+		
+		jObj.put(key, value);	// 인자로 들어온 key, value 추가
+    	
+		// 4. 라이브러리 이용 => String 으로 변환하기
+    	String strJson = jObj.toString(); 
+    	
     	// 5. SQL 구문으로 DB에 넣기
-    	
-    	
-    	int numID = Integer.parseInt(m_id);
-    	String strJson = "{ \"" + key + "\" : " + value + "\"}"; 
-    	
-    	m_stmt.executeUpdate("UPDATE Vertices SET Properties ('"+ strJson + "') "
-    			+ "WHERE ID = " + numID + ";");
+    	m_stmt.executeUpdate("UPDATE Vertices SET Properties = '"+ strJson + "'"
+    			+ "WHERE ID = " + m_id + ";");
     }
 }
