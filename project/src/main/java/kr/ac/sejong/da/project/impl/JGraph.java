@@ -9,9 +9,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class JGraph implements Graph {
 	// 쿼리문 사용하기 위해 가져옴
@@ -35,7 +36,7 @@ public class JGraph implements Graph {
         	m_stmt.executeUpdate("INSERT INTO vertices SET ID=" + intID + ";");
         	
         	JVertex v = new JVertex();
-        	v.setID(id);
+        	v.setID(id); //id만 세팅
         	
           	return v;
         } catch (SQLException e) {
@@ -51,15 +52,23 @@ public class JGraph implements Graph {
 			ResultSet rs = m_stmt.executeQuery("SELECT * FROM vertices WHERE ID=" + intID);
 
 			JVertex v = new JVertex();
+			v.setID(id);
+			
 			while (rs.next()) {
-				Object line = rs.getObject(2);
-				JSONArray arr = new JSONArray(line);
+				String line = rs.getString(2); //vertex의 property를 받아옴
+				
+				if(line!=null) { //NullPointerException 오류 처리
+					JSONObject arr = new JSONObject(line);
 
-				String key = arr.getString(1); // 한 쌍일때를 상정->보완 필요
-				Object value = arr.get(3);
-
-				v.setID(id);
-				v.setProperty(key, value);
+					//v의 key와 property를 db에서 받아온 vertex와 동일하게 세팅
+					Iterator<String> iter = arr.keys();
+					
+					while(iter.hasNext()) {
+						String key = (String)(iter.next());
+	    				v.setProperty(key, arr.get(key));
+	    				System.out.println(key + " " + arr.get(key)); //확인용 출력코드
+	    			}
+				}
 			}
 
 			return v;
@@ -79,16 +88,23 @@ public class JGraph implements Graph {
 			while (rs.next()) {
 				JVertex v = new JVertex();
 				String id = rs.getString(1);
-				Object line = rs.getObject(2);
-				JSONArray arr = new JSONArray(line);
-
-				String key = arr.getString(1); // 한 쌍일때를 상정->보완 필요
-				Object value = arr.get(3);
-
+				String line = rs.getString(2); //vertex의 property를 받아옴
+				
 				v.setID(id);
-				v.setProperty(key, value);
+				
+				if(line!=null) { //NullPointerException 오류 처리
+					JSONObject arr = new JSONObject(line);
+
+					//v의 key와 property를 db에서 받아온 vertex와 동일하게 세팅
+					Iterator<String> iter = arr.keys();
+					
+					while(iter.hasNext()) {
+						String key = (String)(iter.next());
+	    				v.setProperty(key, arr.get(key));
+	    				System.out.println(key + " " + arr.get(key)); //확인용 출력코드
+	    			}
+				}
 				vertexData.add(v);
-				System.out.println(v.getId());
 			}
 			return vertexData;
 		} catch (SQLException e) {
@@ -102,21 +118,22 @@ public class JGraph implements Graph {
 	public Iterable<Vertex> getVertices(String key, Object value) { // 손혜원
 
 		try {
-			ResultSet rs = m_stmt.executeQuery("SELECT ID, JSON_VALUE(Properties,'$." + key + "'),  "
-					+ " JSON_VALUE(Properties,'$." + value + "')" + "FROM vertices;");
+			ResultSet rs = m_stmt.executeQuery("SELECT ID, JSON_VALUE(Properties,'$." + key + "')"
+					+  "FROM vertices WHERE Properties IS NOT NULL;");
+			
 			List<Vertex> vertexData = new ArrayList<Vertex>();
 
 			while (rs.next()) {
-
 				JVertex v = new JVertex();
 				String id = rs.getString(1);
-				String k = rs.getString(2); // 자료형이 나눠져 반환되므로
-				Object val = rs.getObject(3);
+				String line = rs.getString(2);
+				
+				v.setID(id); 
 
-				v.setID(id);
-				v.setProperty(k, val);
+				if(line!=null && line.equals(value.toString())) { //NullPointerException 오류 처리
+					v = (JVertex) this.getVertex(id);
+				}
 				vertexData.add(v);
-				System.out.println(v.getId());
 			}
 			return vertexData;
 		} catch (SQLException e) {
