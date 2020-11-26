@@ -66,7 +66,6 @@ public class JGraph implements Graph {
 					while(iter.hasNext()) {
 						String key = (String)(iter.next());
 	    				v.setProperty(key, arr.get(key));
-	    				//System.out.println(key + " " + arr.get(key)); //확인용 출력코드
 	    			}
 				}
 			}
@@ -101,7 +100,6 @@ public class JGraph implements Graph {
 					while(iter.hasNext()) {
 						String key = (String)(iter.next());
 	    				v.setProperty(key, arr.get(key));
-	    				//System.out.println(key + " " + arr.get(key)); //확인용 출력코드
 	    			}
 				}
 				vertexData.add(v);
@@ -132,8 +130,8 @@ public class JGraph implements Graph {
 
 				if(line!=null && line.equals(value.toString())) { //NullPointerException 오류 처리
 					v = (JVertex) this.getVertex(id);
+					vertexData.add(v);
 				}
-				vertexData.add(v);
 			}
 			return vertexData;
 		} catch (SQLException e) {
