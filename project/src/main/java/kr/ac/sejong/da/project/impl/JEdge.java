@@ -59,15 +59,13 @@ public class JEdge implements Edge {
 
 		ResultSet rs = m_stmt.executeQuery(sql);
 
-		String ID = rs.getString("ID");
-
-		if (ID == null)
-			return null;
-
-		vertex = new JVertex();
-		((JVertex) vertex).setID(ID);
-
-		return vertex;
+	      while(rs.next()) {
+	          String ID = rs.getString("ID");         
+	          vertex = new JVertex();
+	          ((JVertex) vertex).setID(ID);
+	          return vertex;
+	       }
+	       return null;
 	}
 
 	@Override
