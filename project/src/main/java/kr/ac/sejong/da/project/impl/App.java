@@ -11,13 +11,11 @@ import kr.ac.sejong.da.project.Vertex;
 
 public class App {
 	public static void main(String[] args) throws SQLException {
-		// DB 서버 연결
+		// DB 연결 매니저
 		DatabaseMgr dbMgr = DatabaseMgr.getInstance();
-		dbMgr.initialize("3307", "1111"); // 각자 사용하는 포트, 비번 작성
-
-		// 예를 들어 버텍스에서 쿼리문 사용
+		dbMgr.initialize("3306", "0000"); 
+		
 		JVertex v = new JVertex();
-		// dbMgr에서 이미 db서버와 연동된 Statement 사용함
 		v.setStatement(dbMgr.getStatement());
 		
 		Graph g = new JGraph();
@@ -28,27 +26,34 @@ public class App {
         Edge e1 = g.addEdge(v2, v1, "label");
         Edge e2 = g.addEdge(v2, v3, "label");
 
-        Iterator<Edge> ei1 = v2.getEdges(Direction.OUT).iterator();    //결과는 v1, v3를 포함한 iterator
+        Iterator<Edge> ei1 = v2.getEdges(Direction.OUT).iterator();
         while(ei1.hasNext()){
             Edge e =ei1.next();
             System.out.println(e);
         }
         
-//        Iterator<Edge> ei2 = v2.getEdges(Direction.IN, "label").iterator();     //결과는 null
+//        Iterator<Edge> ei2 = v2.getEdges(Direction.IN, "label").iterator();
 //        while(ei2.hasNext()){
 //            Edge e = ei2.next();
 //            System.out.println(e);
 //        }
 
-        // 11.23 확인 결과 터짐 
-        // System.out.println(e1.getVertex(Direction.OUT));    //결과는   v2
-        // System.out.println(e1.getVertex(Direction.IN));    //결과는   v1
+        // 11.23 확인 결과 터짐
+        // System.out.println(e1.getVertex(Direction.OUT)); 
+        // System.out.println(e1.getVertex(Direction.IN)); 
 
         v1.setProperty("x", 300);
         v1.setProperty("y", 300);
         v1.setProperty("y", 200);
+        
+        // edge Property 값 설정
+		e1.setProperty("x", 600);
+		e1.setProperty("y", 700);
+		e2.setProperty("v", 400);
+		e2.setProperty("w", 500);
 		
-		// DB 서버 종료, 쿼리문 작업 모두 마친 후, 마지막에 호출할 것
+		e1.getProperty("x"); // edge Property값 가져오기
+		e2.getPropertyKeys(); //edge Property의 key 값 가져오기
 		dbMgr.release();
 	}
 }
