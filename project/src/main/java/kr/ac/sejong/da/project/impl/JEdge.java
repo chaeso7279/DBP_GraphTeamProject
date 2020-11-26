@@ -18,10 +18,10 @@ import kr.ac.sejong.da.project.Vertex;
 
 public class JEdge implements Edge {
 
-	public int out, in; // outID|label|inID �삎�깭�쓽 怨좎쑀 �븘�씠�뵒
+	// OutV,inV,label 전역변수 설정
+	public int out, in;
 	public String lab;
 
-	// 荑쇰━臾� �궗�슜�븯湲� �쐞�빐 媛��졇�샂
 	public Connection m_connection = null;
 	private Statement m_stmt = null;
 
@@ -37,18 +37,19 @@ public class JEdge implements Edge {
 		m_stmt = stmt;
 	}
 
-	public void setID(String outV, String inV, String label) { // 梨꾩닔�솕
+	public void setID(String outV, String inV, String label) { // OutV, inV,label 값 설정
 		out = Integer.parseInt(outV);
 		in = Integer.parseInt(inV);
 		lab = label;
 
 	}
 
-	@Override // Vertices�뀒�씠釉붿뿉�꽌 �븯�굹�쓽 vertex瑜� 媛��졇�삤�뒗嫄� 媛숈��뜲 direction�쓣 �뼱�뼸寃� 荑쇰━臾몄쓣
-				// 媛��졇�삱吏� 紐곕씪�꽌 �씪�떒�� select *
-	// from vertices; 瑜쇱�
-	public Vertex getVertex(Direction direction) throws SQLException { // Vertex媛��졇���꽌 諛섑솚�븯�뒗 硫붿냼�뱶
-		Vertex vertex = null; // �뾾�쑝硫� NULL
+	@Override
+	// Vertices테이블에서 하나의 vertex를 가져오는거 같은데 direction을 어떻게 쿼리문을 가져올지 몰라서 일단은 select *
+	// from vertices; 를씀
+	public Vertex getVertex(Direction direction) throws SQLException { // Vertex가져와서 반환하는 메소드
+		// 없으면 NULL
+		Vertex vertex = null;
 
 		String sql = "SELECT * FROM Vertices WHERE ID = ";
 		if (direction == Direction.IN)
@@ -59,82 +60,114 @@ public class JEdge implements Edge {
 		ResultSet rs = m_stmt.executeQuery(sql);
 
 		String ID = rs.getString("ID");
-		// Object Properties = rs.getObject("Properties");
 
 		if (ID == null)
 			return null;
 
 		vertex = new JVertex();
 		((JVertex) vertex).setID(ID);
-		// vertex.setProperty("Properties", Properties);
 
 		return vertex;
 	}
 
 	@Override
-	public String getLabel() throws SQLException {
-		return lab;
-	}
+	public String getLabel() throws SQLException { // db에서 Label을 select label from edges; 가져오는 테이블
+		ResultSet rs = m_stmt.executeQuery("SELECT Label FROM Edges;");
+		String label = rs.getString("Label");
 
-	@Override // property媛� �뀒�씠釉붿뿉 �떎 議댁옱 �븯�뒗�뜲 �씪�떒�� 萸붿� 紐곕씪�꽌 edges�뿉留� �꽔�뼱�몺
-	public Object getProperty(String key) throws SQLException { // select key from graph where key=?
-		PreparedStatement pstmt = m_connection.prepareStatement("SELECT ? FROM Edges;");
-		pstmt.setString(1, key);
-
-		ResultSet rs = pstmt.executeQuery();
-		Object result = rs.getObject(key);
-
-		if (result == null)
+		if (label == null)
 			return null;
 
-		return result;
+		return label;
+	}
+
+	@Override // property key의 value 값 가져오기
+	public Object getProperty(String key) throws SQLException {
+		// 현재 OutV와 InV에 맞는 Properties select하는 쿼리
+		String sql = "SELECT Properties FROM edges WHERE OutV = " + out + " AND InV = " + in
+				+ " AND NOT Properties IS NULL;"; // 없다면 NULL
+		ResultSet rs = m_stmt.executeQuery(sql);
+
+		// JSON 형태를 이용하기 위해 사용
+		JSONObject jObj = null;
+		if (!rs.next())
+			jObj = new JSONObject();
+		else
+			jObj = new JSONObject(rs.getString(1));
+
+		// Properties 내용 반복문으로 가져오기
+		Iterator<String> iter = jObj.keys();
+		while (iter.hasNext()) {
+			if (iter.next() == key) {
+				jObj.remove(key);
+				break;
+			}
+		}
+		return jObj.getInt(key);
 	}
 
 	@Override
-	public Set<String> getPropertyKeys() throws SQLException { // �씠�빐紐삵뻽�뒗�뜲 而щ읆紐낆쓣 媛��졇�삤�뒗 嫄� 媛숈쓬... �솗�떎移� �븡�븘�슂
-		ResultSet rs = m_stmt
-				.executeQuery("SELECT column_name FROM information_schema.columns WHERE table_schema = 'DB�씠由꾨꽔湲�';");
-		Set<String> result = new HashSet<>();
-		while (rs.next()) {
-			result.add(rs.getString(1));
-		}
+	public Set<String> getPropertyKeys() throws SQLException { // property의 key값 모두 가져오기
+		Set<String> set = new HashSet<>();
+		// 현재 OutV와 InV에 맞는 Properties select하는 쿼리
+		String sql = "SELECT Properties FROM edges WHERE OutV = " + out + " AND InV = " + in
+				+ " AND NOT Properties IS NULL;"; // 없다면 NULL
+		ResultSet rs = m_stmt.executeQuery(sql);
 
-		return result;
+		// JSON 형태를 이용하기 위해 사용
+		JSONObject jObj = null;
+		if (!rs.next())
+			jObj = new JSONObject();
+		else
+			jObj = new JSONObject(rs.getString(1));
+
+		// Properties의 key값을 반복문으로 가져오기
+		Iterator<String> iter = jObj.keys();
+		while (iter.hasNext()) {
+			String str = iter.next();
+			
+			if (!set.contains(str)) {
+				set.add(str);
+			}
+		}
+		
+		return set;
 	}
 
-	@Override // property媛� �뀒�씠釉붿뿉 �떎 議댁옱 �븯�뒗�뜲 �씪�떒�� 萸붿� 紐곕씪�꽌 edges�뿉留� �꽔�뼱�몺
-	public void setProperty(String key, Object value) throws SQLException { // select key from edges
+	@Override // insert Properties 쿼리
+	public void setProperty(String key, Object value) throws SQLException {
 
-		// 1. 湲곗〈 property 媛��졇�삤湲�
-    	String sql = "SELECT Properties FROM edges WHERE OutV = " + out +" AND InV = " + in + " AND NOT Properties IS NULL;"; // NULL �젣�쇅
-    	ResultSet rs = m_stmt.executeQuery(sql);
-    	
-    	// 2. �씪�씠釉뚮윭由� �씠�슜 => jsonObject濡� �뙆�떛�븯湲� 
-    	JSONObject jObj = null;
-    	if(!rs.next())		 			// 湲곗〈 Property �뾾�쓬(泥섏쓬 �옉�꽦)
-    		jObj = new JSONObject();
-    	else							// 湲곗〈 Property瑜� JSON Object濡� 留뚮벀
-    		jObj = new JSONObject(rs.getString(1));
-    	
-    	// 3. jsonObject�쓽 put �븿�닔 �씠�슜�빐 key, value 異붽� �삉�뒗 value 媛� �닔�젙
-    	Iterator<String> iter = jObj.keys(); // key 以묐났 寃��궗
-		while(iter.hasNext()) {
-			if(iter.next() == key) {	// 湲곗〈 property�뿉 異붽��븯�젮�뒗 key媛� �씠誘� 議댁옱�븷 �븣,
-				jObj.remove(key);		// �궘�젣�븯怨�, �떎�떆 異붽��빐以� 
-				break;					// �떒, �씠 寃쎌슦 property �궡 �닚�꽌 蹂�寃쎈컻�깮 -> �궘�젣�븯怨� �뮘�뿉 異붽��릺硫댁꽌	
-			}							
+		// 현재 OutV와 InV에 맞는 Properties select하는 쿼리
+		String sql = "SELECT Properties FROM edges WHERE OutV = " + out + " AND InV = " + in
+				+ " AND NOT Properties IS NULL;"; // 없다면 NULL
+		ResultSet rs = m_stmt.executeQuery(sql);
+
+		// JSON 형태를 이용하기 위해 사용
+		JSONObject jObj = null;
+		if (!rs.next())
+			jObj = new JSONObject();
+		else
+			jObj = new JSONObject(rs.getString(1));
+
+		// Properties 내용 반복문으로 가져오기
+		Iterator<String> iter = jObj.keys();
+		while (iter.hasNext()) {
+			if (iter.next() == key) {
+				jObj.remove(key);
+				break;
+			}
 		}
 
 		jObj.put(key, value);
 		String strJson = jObj.toString();
 
 		m_stmt.executeUpdate("INSERT INTO Edges VALUES (" + out + "," + in + "," + lab + ",'" + strJson
-				+ "') ON DUPLICATE KEY UPDATE Properties = '" + strJson + "';"); // update�븯怨�
+				+ "') ON DUPLICATE KEY UPDATE Properties = '" + strJson + "';"); // OutV, InV, Label 삽입쿼리
 
 	}
 
-	@Override // this.id濡� 諛섑솚
+	@Override
 	public Object getId() {
-		return out+" "+in+" "+lab;
+		return out + " " + in + " " + lab;
 	}
 }
