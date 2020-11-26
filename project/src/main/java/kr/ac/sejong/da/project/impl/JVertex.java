@@ -4,10 +4,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import kr.ac.sejong.da.project.DatabaseMgr;
@@ -162,13 +164,33 @@ public class JVertex implements Vertex {
     }
 
     @Override
-    public Object getProperty(String key) {
-        return null;
+    public Object getProperty(String key) throws SQLException {	// 채수화
+    	
+    	String sql = "SELECT JSON_VALUE(Properties, '$." + key + "') FROM Vertices WHERE ID = " + m_id + " AND NOT Properties IS NULL;";
+    	ResultSet rs = m_stmt.executeQuery(sql);
+    	
+    	if(!rs.next())		 			// 기존 Property 없음(처음 작성) => null 반환
+    		return null;	
+    	
+    	return rs.getString(1);
     }
 
     @Override
-    public Set<String> getPropertyKeys() {
-        return null;
+    public Set<String> getPropertyKeys() throws SQLException {	// 채수화
+   
+    	String sql = "SELECT JSON_KEYS(Properties) FROM Vertices WHERE ID = " + m_id + " AND NOT Properties IS NULL;";
+    	ResultSet rs = m_stmt.executeQuery(sql);
+    	
+    	if(!rs.next())		 			// 기존 Property 없음(처음 작성) => keyX, null 반환
+    		return null;				
+			
+    	JSONArray arrKeys = new JSONArray(rs.getString(1));
+		HashSet<String> setKeys = new HashSet<String>();
+    	
+		for(int i = 0; i < arrKeys.length(); ++i)
+			setKeys.add(arrKeys.getString(i));
+		
+        return setKeys;
     }
 
     @Override	// 기존 property 유지하면서 추가, key 중복 시 value 업데이트
