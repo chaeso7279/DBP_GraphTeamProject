@@ -52,7 +52,6 @@ public class JGraph implements Graph {
 			ResultSet rs = m_stmt.executeQuery("SELECT * FROM vertices WHERE ID=" + intID);
 
 			if( !rs.next() ) {
-				System.out.println("null check");
 				return null;
 			}
 			
