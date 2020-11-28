@@ -168,4 +168,11 @@ public class JEdge implements Edge {
 	public Object getId() {
 		return out + " " + in + " " + lab;
 	}
+	
+	public String toString() {
+		String line = "e[" + out + "-" + lab + "-" + in + "]";
+		return line;
+	}
+	
+	
 }
