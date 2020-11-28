@@ -51,6 +51,11 @@ public class JGraph implements Graph {
 			int intID = Integer.parseInt(id);
 			ResultSet rs = m_stmt.executeQuery("SELECT * FROM vertices WHERE ID=" + intID);
 
+			if( !rs.next() ) {
+				System.out.println("null check");
+				return null;
+			}
+			
 			JVertex v = new JVertex();
 			v.setID(id);
 			
