@@ -44,7 +44,8 @@ public class JEdge implements Edge {
 
 	}
 
-	@Override
+	//김동헌
+	@Override 
 	// Vertices테이블에서 하나의 vertex를 가져오는거 같은데 direction을 어떻게 쿼리문을 가져올지 몰라서 일단은 select *
 	// from vertices; 를씀
 	public Vertex getVertex(Direction direction) throws SQLException { // Vertex가져와서 반환하는 메소드
@@ -68,7 +69,8 @@ public class JEdge implements Edge {
 	       return null;
 	}
 
-	@Override
+	//김동헌
+	@Override 
 	public String getLabel() throws SQLException { // db에서 Label을 select label from edges; 가져오는 테이블
 		ResultSet rs = m_stmt.executeQuery("SELECT Label FROM Edges;");
 		String label = rs.getString("Label");
@@ -78,8 +80,9 @@ public class JEdge implements Edge {
 
 		return label;
 	}
-
-	@Override // property key의 value 값 가져오기
+	
+	//김동헌
+	@Override // property key의 value 값 가져오기 
 	public Object getProperty(String key) throws SQLException {
 		// 현재 OutV와 InV에 맞는 Properties select하는 쿼리
 		String sql = "SELECT Properties FROM edges WHERE OutV = " + out + " AND InV = " + in
@@ -104,7 +107,8 @@ public class JEdge implements Edge {
 		return jObj.getInt(key);
 	}
 
-	@Override
+	//김동헌
+	@Override 
 	public Set<String> getPropertyKeys() throws SQLException { // property의 key값 모두 가져오기
 		Set<String> set = new HashSet<>();
 		// 현재 OutV와 InV에 맞는 Properties select하는 쿼리
@@ -132,7 +136,8 @@ public class JEdge implements Edge {
 		return set;
 	}
 
-	@Override // insert Properties 쿼리
+	 //김동헌
+	@Override // insert Properties 쿼리 
 	public void setProperty(String key, Object value) throws SQLException {
 
 		// 현재 OutV와 InV에 맞는 Properties select하는 쿼리
@@ -164,7 +169,7 @@ public class JEdge implements Edge {
 
 	}
 
-	@Override
+	@Override 
 	public Object getId() {
 		return out + " " + in + " " + lab;
 	}
