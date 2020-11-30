@@ -52,6 +52,9 @@ public class App {
 		e2.setProperty("v", 400);
 		e2.setProperty("w", 500);
 		
+		// autoCommit 꺼져(false)있으면, get 하기전에 DB 적용시키는 방법
+		//dbMgr.getConnection().commit();  
+		
 		e1.getProperty("x"); // edge Property값 가져오기
 		e2.getPropertyKeys(); //edge Property의 key 값 가져오기
 		dbMgr.release();
