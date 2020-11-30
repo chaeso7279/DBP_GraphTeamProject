@@ -123,7 +123,7 @@ public class JVertex implements Vertex {
     	while(rs.next()) {
     		// 가져온 결과가 null 일 경우 처리 해줘야함(인덱싱?)
     		String id = rs.getString(1);
-    		String prop = rs.getString(2);	// 예외처리 추가할 것 (property null이라서 안가져와짐!)
+    		String prop = rs.getString(2);
     		
     		Vertex vTemp = new JVertex();
     		((JVertex) vTemp).setID(id);
