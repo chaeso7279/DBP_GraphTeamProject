@@ -98,9 +98,9 @@ public class JVertex implements Vertex {
     public Iterable<Vertex> getVertices(Direction direction, String... labels) throws SQLException {	// 채수화
     	String sql = "";
     	if(direction == Direction.IN)
-    		sql = "SELECT OutV FROM Edges WHERE InV = " + m_id;
+    		sql = "SELECT OutV, Properties FROM Edges WHERE InV = " + m_id;
     	else if(direction == Direction.OUT)
-    		sql = "SELECT InV FROM Edges WHERE OutV = " + m_id;
+    		sql = "SELECT InV, Properties FROM Edges WHERE OutV = " + m_id;
     	/*
 		 * else // BOTH // BOTH 일 경우 생각해보기..
 		 */  
@@ -123,7 +123,7 @@ public class JVertex implements Vertex {
     	while(rs.next()) {
     		// 가져온 결과가 null 일 경우 처리 해줘야함(인덱싱?)
     		String id = rs.getString(1);
-    		String prop = rs.getString(2);
+    		String prop = rs.getString(2);	// 예외처리 추가할 것 (property null이라서 안가져와짐!)
     		
     		Vertex vTemp = new JVertex();
     		((JVertex) vTemp).setID(id);
