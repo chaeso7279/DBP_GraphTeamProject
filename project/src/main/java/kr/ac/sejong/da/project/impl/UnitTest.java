@@ -2,6 +2,7 @@ package kr.ac.sejong.da.project.impl;
 
 import java.sql.SQLException;
 
+import kr.ac.sejong.da.project.DatabaseMgr;
 import kr.ac.sejong.da.project.Direction;
 import kr.ac.sejong.da.project.Edge;
 import kr.ac.sejong.da.project.Graph;
@@ -11,6 +12,8 @@ public class UnitTest {
 
 	public static void doTest(Graph g) throws SQLException {
 
+		
+		
 		// 그래프 생성
 		for (int i = 0; i < 13; i++) {
 			Vertex v = g.addVertex(String.valueOf(i));
@@ -71,6 +74,16 @@ public class UnitTest {
 	}
 
 	public static void main(String[] args) {
+		
+		// DB 연결
+		DatabaseMgr dbMgr = DatabaseMgr.getInstance();
+		try {
+			dbMgr.initialize("3307", "1111");
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} 
+		
 		// 이름 교체하세요
 		Graph g = new JGraph();
 		try {
