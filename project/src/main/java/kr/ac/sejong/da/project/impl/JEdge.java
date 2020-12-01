@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import kr.ac.sejong.da.project.DatabaseMgr;
@@ -22,12 +23,11 @@ public class JEdge implements Edge {
 	public int out, in;
 	public String lab;
 
-	public Connection m_connection = null;
 	private Statement m_stmt = null;
 
 	JEdge() {
-		if (m_connection == null)
-			m_connection = DatabaseMgr.getInstance().getConnection();
+		super();
+
 		if (m_stmt == null)
 			m_stmt = DatabaseMgr.getInstance().getStatement();
 	}
@@ -48,53 +48,57 @@ public class JEdge implements Edge {
 	@Override 
 	// Vertices테이블에서 하나의 vertex를 가져오는거 같은데 direction을 어떻게 쿼리문을 가져올지 몰라서 일단은 select *
 	// from vertices; 를씀
-	public Vertex getVertex(Direction direction) throws SQLException { // Vertex가져와서 반환하는 메소드
+	public Vertex getVertex(Direction direction) { // Vertex가져와서 반환하는 메소드
 		// 없으면 NULL
-		Vertex vertex = null;
-
-		String sql = "SELECT * FROM Vertices WHERE ID = ";
-		if (direction == Direction.IN)
-			sql += in;
-		else if (direction == Direction.OUT)
-			sql += out;
-
-		ResultSet rs = m_stmt.executeQuery(sql);
-
-	      while(rs.next()) {
-	          String ID = rs.getString("ID");         
-	          vertex = new JVertex();
-	          ((JVertex) vertex).setID(ID);
-	          return vertex;
-	       }
-	       return null;
+		Vertex vertex = new JVertex();
+		
+		if (direction == Direction.IN) {
+			((JVertex) vertex).setID(String.valueOf(in));
+		}
+		else if (direction == Direction.OUT) {
+			((JVertex) vertex).setID(String.valueOf(out));
+		}
+		
+		return vertex;
+		
 	}
 
 	//김동헌
 	@Override 
-	public String getLabel() throws SQLException { // db에서 Label을 select label from edges; 가져오는 테이블
-		ResultSet rs = m_stmt.executeQuery("SELECT Label FROM Edges;");
-		String label = rs.getString("Label");
-
-		if (label == null)
-			return null;
+	public String getLabel() { // db에서 Label을 select label from edges; 가져오는 테이블
+		ResultSet rs;
+		String label = null;
+		
+		try {
+			rs = m_stmt.executeQuery("SELECT Label FROM Edges;");
+			label = rs.getString("Label");
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
 
 		return label;
 	}
 	
 	//김동헌
 	@Override // property key의 value 값 가져오기 
-	public Object getProperty(String key) throws SQLException {
+	public Object getProperty(String key) {
 		// 현재 OutV와 InV에 맞는 Properties select하는 쿼리
 		String sql = "SELECT Properties FROM edges WHERE OutV = " + out + " AND InV = " + in
-				+ " AND NOT Properties IS NULL;"; // 없다면 NULL
-		ResultSet rs = m_stmt.executeQuery(sql);
-
-		// JSON 형태를 이용하기 위해 사용
-		JSONObject jObj = null;
-		if (!rs.next())
-			jObj = new JSONObject();
-		else
-			jObj = new JSONObject(rs.getString(1));
+						+ " AND NOT Properties IS NULL;"; // 없다면 NULL
+		ResultSet rs;
+		JSONObject jObj = null; // JSON 형태를 이용하기 위해 사용
+		
+		try {
+			rs = m_stmt.executeQuery(sql);
+			
+			if (!rs.next())
+				jObj = new JSONObject();
+			else
+				jObj = new JSONObject(rs.getString(1));
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		// Properties 내용 반복문으로 가져오기
 		Iterator<String> iter = jObj.keys();
@@ -109,19 +113,25 @@ public class JEdge implements Edge {
 
 	//김동헌
 	@Override 
-	public Set<String> getPropertyKeys() throws SQLException { // property의 key값 모두 가져오기
+	public Set<String> getPropertyKeys() { // property의 key값 모두 가져오기
 		Set<String> set = new HashSet<>();
 		// 현재 OutV와 InV에 맞는 Properties select하는 쿼리
 		String sql = "SELECT Properties FROM edges WHERE OutV = " + out + " AND InV = " + in
 				+ " AND NOT Properties IS NULL;"; // 없다면 NULL
-		ResultSet rs = m_stmt.executeQuery(sql);
-
-		// JSON 형태를 이용하기 위해 사용
-		JSONObject jObj = null;
-		if (!rs.next())
-			jObj = new JSONObject();
-		else
-			jObj = new JSONObject(rs.getString(1));
+		ResultSet rs;
+		JSONObject jObj = null; // JSON 형태를 이용하기 위해 사용
+		
+		try {
+			rs = m_stmt.executeQuery(sql);
+			
+			if (!rs.next())
+				jObj = new JSONObject();
+			else
+				jObj = new JSONObject(rs.getString(1));
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		// Properties의 key값을 반복문으로 가져오기
 		Iterator<String> iter = jObj.keys();
@@ -138,19 +148,24 @@ public class JEdge implements Edge {
 
 	 //김동헌
 	@Override // insert Properties 쿼리 
-	public void setProperty(String key, Object value) throws SQLException {
-
+	public void setProperty(String key, Object value) {
 		// 현재 OutV와 InV에 맞는 Properties select하는 쿼리
 		String sql = "SELECT Properties FROM edges WHERE OutV = " + out + " AND InV = " + in
 				+ " AND NOT Properties IS NULL;"; // 없다면 NULL
-		ResultSet rs = m_stmt.executeQuery(sql);
+		ResultSet rs;
+		JSONObject jObj = null; // JSON 형태를 이용하기 위해 사용
+		
+		try {
+			rs = m_stmt.executeQuery(sql);
 
-		// JSON 형태를 이용하기 위해 사용
-		JSONObject jObj = null;
-		if (!rs.next())
-			jObj = new JSONObject();
-		else
-			jObj = new JSONObject(rs.getString(1));
+			if (!rs.next())
+				jObj = new JSONObject();
+			else
+				jObj = new JSONObject(rs.getString(1));
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		// Properties 내용 반복문으로 가져오기
 		Iterator<String> iter = jObj.keys();
@@ -164,9 +179,13 @@ public class JEdge implements Edge {
 		jObj.put(key, value);
 		String strJson = jObj.toString();
 
-		m_stmt.executeUpdate("INSERT INTO Edges VALUES (" + out + "," + in + "," + lab + ",'" + strJson
-				+ "') ON DUPLICATE KEY UPDATE Properties = '" + strJson + "';"); // OutV, InV, Label 삽입쿼리
-
+		try { // OutV, InV, Label 삽입쿼리
+			m_stmt.executeUpdate("INSERT INTO Edges VALUES (" + out + "," + in + "," + lab + ",'" + strJson
+					+ "') ON DUPLICATE KEY UPDATE Properties = '" + strJson + "';");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
 	}
 
 	@Override 
