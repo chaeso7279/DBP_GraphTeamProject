@@ -1,6 +1,5 @@
 package kr.ac.sejong.da.project;
 
-import java.sql.SQLException;
 import java.util.Set;
 
 /**
@@ -21,17 +20,15 @@ public abstract interface Element {
      *
      * @param key the key of the key/value property
      * @return the object value related to the string key
-     * @throws SQLException 
      */
-    public Object getProperty(String key) throws SQLException;
+    public Object getProperty(String key);
 
     /**
      * Return all the keys associated with the element.
      *
      * @return the set of all string keys associated with the element
-     * @throws SQLException 
      */
-    public Set<String> getPropertyKeys() throws SQLException;
+    public Set<String> getPropertyKeys();
 
     /**
      * Assign a key/value property to the element.
@@ -39,9 +36,8 @@ public abstract interface Element {
      *
      * @param key   the string key of the property
      * @param value the object value o the property
-     * @throws SQLException 
      */
-    public void setProperty(String key, Object value) throws SQLException;
+    public void setProperty(String key, Object value);
 
     /**
      * An identifier that is unique to its inheriting class.

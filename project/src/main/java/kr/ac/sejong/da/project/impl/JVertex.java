@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import kr.ac.sejong.da.project.DatabaseMgr;
@@ -48,7 +49,7 @@ public class JVertex implements Vertex {
 	} // 채수화
 
 	@Override // 현재 버텍스가 인자 방향(Out,In)에 해당하는 Edges 모두 가져옴
-	public Iterable<Edge> getEdges(Direction direction, String... labels) throws SQLException { // 채수화
+	public Iterable<Edge> getEdges(Direction direction, String... labels) { // 채수화
 		// SQL 구문 실행
 		String sql = "";
 		
@@ -67,7 +68,13 @@ public class JVertex implements Vertex {
 			sql += ";";
 		}
 		
-		ResultSet rs = m_stmt.executeQuery(sql);
+		ResultSet rs = null;
+		try {
+			rs = m_stmt.executeQuery(sql);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		// prepared statement 버전 (향상 효과 없었음)
 		/*
@@ -87,26 +94,31 @@ public class JVertex implements Vertex {
 		// 결과 담을 리스트 생성
 		List<Edge> result = new ArrayList<Edge>();
 
-		while (rs.next()) {
-			// 가져온 결과가 null 일 경우 처리 해줘야함(인덱싱?)
-			String outV = rs.getString(1);
-			String inV = rs.getString(2);
-			String label = rs.getString(3);
-			String prop = rs.getString(4);
+		try {
+			while (rs.next()) {
+				// 가져온 결과가 null 일 경우 처리 해줘야함(인덱싱?)
+				String outV = rs.getString(1);
+				String inV = rs.getString(2);
+				String label = rs.getString(3);
+				String prop = rs.getString(4);
 
-			Edge eTemp = new JEdge();
-			((JEdge) eTemp).setID(outV, inV, label);
+				Edge eTemp = new JEdge();
+				((JEdge) eTemp).setID(outV, inV, label);
 
-			if (prop != null) { // property가 null 아닐 때
-				JSONObject jObj = new JSONObject(prop); // 라이브러리 사용
-				Iterator<String> iter = jObj.keys();
+				if (prop != null) { // property가 null 아닐 때
+					JSONObject jObj = new JSONObject(prop); // 라이브러리 사용
+					Iterator<String> iter = jObj.keys();
 
-				while (iter.hasNext()) {
-					String key = (String) iter.next();
-					eTemp.setProperty(key, jObj.get(key));
+					while (iter.hasNext()) {
+						String key = (String) iter.next();
+						eTemp.setProperty(key, jObj.get(key));
+					}
 				}
+				result.add(eTemp);
 			}
-			result.add(eTemp);
+		} catch (JSONException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 		if (result.isEmpty()) // 결과가 없을 경우, null 반환
@@ -116,7 +128,7 @@ public class JVertex implements Vertex {
 	}
 
 	@Override // 현재 버텍스와 해당 방향(Out,In) 으로 연결된 Vertex 모두 가져옴
-	public Iterable<Vertex> getVertices(Direction direction, String... labels) throws SQLException { // 채수화
+	public Iterable<Vertex> getVertices(Direction direction, String... labels) { // 채수화
 		String sql = "";
 		
 		if(direction == Direction.IN) 
@@ -135,7 +147,13 @@ public class JVertex implements Vertex {
 		}
 	 
 
-		ResultSet rs = m_stmt.executeQuery(sql);
+		ResultSet rs = null;
+		try {
+			rs = m_stmt.executeQuery(sql);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		// prepared statement 버전 (향상 효과 없었음)
 //		if (direction == Direction.IN)
@@ -152,24 +170,29 @@ public class JVertex implements Vertex {
 		// 결과 담을 리스트 생성
 		List<Vertex> result = new ArrayList<Vertex>();
 
-		while (rs.next()) {
-			// 가져온 결과가 null 일 경우 처리 해줘야함(인덱싱?)
-			String id = rs.getString(1);
-			String prop = rs.getString(2);
+		try {
+			while (rs.next()) {
+				// 가져온 결과가 null 일 경우 처리 해줘야함(인덱싱?)
+				String id = rs.getString(1);
+				String prop = rs.getString(2);
 
-			Vertex vTemp = new JVertex();
-			((JVertex) vTemp).setID(id);
+				Vertex vTemp = new JVertex();
+				((JVertex) vTemp).setID(id);
 
-			if (prop != null) { // property가 null 아닐 때
-				JSONObject jObj = new JSONObject(prop); // 라이브러리 사용
-				Iterator<String> iter = jObj.keys();
+				if (prop != null) { // property가 null 아닐 때
+					JSONObject jObj = new JSONObject(prop); // 라이브러리 사용
+					Iterator<String> iter = jObj.keys();
 
-				while (iter.hasNext()) {
-					String key = (String) iter.next();
-					vTemp.setProperty(key, jObj.get(key));
+					while (iter.hasNext()) {
+						String key = (String) iter.next();
+						vTemp.setProperty(key, jObj.get(key));
+					}
 				}
+				result.add(vTemp);
 			}
-			result.add(vTemp);
+		} catch (JSONException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 		if (result.isEmpty()) // 결과가 없을 경우, null 반환
@@ -179,15 +202,20 @@ public class JVertex implements Vertex {
 	}
 
 	@Override // 현재 버텍스가 OutV, 인자가 InV에 해당하는 Edge 추가
-	public Edge addEdge(String label, Vertex inVertex) throws SQLException { // 채수화
+	public Edge addEdge(String label, Vertex inVertex) { // 채수화
 		int outID = Integer.parseInt(m_id);
 		int inID = Integer.parseInt((String) inVertex.getId());
 		System.out.println("dd : " + inID);
 
 		// DB 삽입
 		String sql = "INSERT INTO Edges SET OutV = " + outID + ", InV = " + inID + ", Label = \"" + label + "\";";
-		if (0 == m_stmt.executeUpdate(sql)) // 삽입 오류 발생 시(중복 등),
-			return null; // null 반환
+		try {
+			if (0 == m_stmt.executeUpdate(sql)) // 삽입 오류 발생 시(중복 등),
+				return null;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} // null 반환
 
 		// Edge 객체 생성
 		Edge eTemp = new JEdge();
@@ -197,28 +225,66 @@ public class JVertex implements Vertex {
 	}
 
 	@Override
-	public Object getProperty(String key) throws SQLException { // 채수화
+	public Object getProperty(String key) { // 채수화
 
 		String sql = "SELECT JSON_VALUE(Properties, '$." + key + "') FROM Vertices WHERE ID = " + m_id
 				+ " AND NOT Properties IS NULL;";
-		ResultSet rs = m_stmt.executeQuery(sql);
+		ResultSet rs = null;
+		try {
+			rs = m_stmt.executeQuery(sql);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-		if (!rs.next()) // 기존 Property 없음(처음 작성) => null 반환
+		try {
+			if (!rs.next()) // 기존 Property 없음(처음 작성) => null 반환
+				return null;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 			return null;
+		}
 
-		return rs.getString(1);
+		try {
+			return rs.getString(1);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	@Override
-	public Set<String> getPropertyKeys() throws SQLException { // 채수화
+	public Set<String> getPropertyKeys() { // 채수화
 
 		String sql = "SELECT JSON_KEYS(Properties) FROM Vertices WHERE ID = " + m_id + " AND NOT Properties IS NULL;";
-		ResultSet rs = m_stmt.executeQuery(sql);
+		ResultSet rs = null;
+		try {
+			rs = m_stmt.executeQuery(sql);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-		if (!rs.next()) // 기존 Property 없음(처음 작성) => keyX, null 반환
+		try {
+			if (!rs.next()) // 기존 Property 없음(처음 작성) => keyX, null 반환
+				return null;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 			return null;
+		}
 
-		JSONArray arrKeys = new JSONArray(rs.getString(1));
+		JSONArray arrKeys = null;
+		try {
+			arrKeys = new JSONArray(rs.getString(1));
+		} catch (JSONException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+		
 		HashSet<String> setKeys = new HashSet<String>();
 
 		for (int i = 0; i < arrKeys.length(); ++i)
@@ -228,18 +294,29 @@ public class JVertex implements Vertex {
 	}
 
 	@Override // 기존 property 유지하면서 추가, key 중복 시 value 업데이트
-	public void setProperty(String key, Object value) throws SQLException { // 채수화
+	public void setProperty(String key, Object value) { // 채수화
 
 		// 1. 기존 property 가져오기
 		String sql = "SELECT Properties FROM Vertices WHERE ID = " + m_id + " AND NOT Properties IS NULL;"; // NULL 제외
-		ResultSet rs = m_stmt.executeQuery(sql);
+		ResultSet rs = null;
+		try {
+			rs = m_stmt.executeQuery(sql);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		// 2. 라이브러리 이용 => jsonObject로 파싱하기
 		JSONObject jObj = null;
-		if (!rs.next()) // 기존 Property 없음(처음 작성)
-			jObj = new JSONObject();
-		else // 기존 Property를 JSON Object로 만듦
-			jObj = new JSONObject(rs.getString(1));
+		try {
+			if (!rs.next()) // 기존 Property 없음(처음 작성)
+				jObj = new JSONObject();
+			else // 기존 Property를 JSON Object로 만듦
+				jObj = new JSONObject(rs.getString(1));
+		} catch (JSONException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		// 3. jsonObject의 put 함수 이용해 key, value 추가 또는 value 값 수정
 		Iterator<String> iter = jObj.keys(); // key 중복 검사
@@ -256,7 +333,12 @@ public class JVertex implements Vertex {
 		String strJson = jObj.toString();
 
 		// 5. SQL 구문으로 DB에 넣기
-		m_stmt.executeUpdate("UPDATE Vertices SET Properties = '" + strJson + "'" + "WHERE ID = " + m_id + ";");
+		try {
+			m_stmt.executeUpdate("UPDATE Vertices SET Properties = '" + strJson + "'" + "WHERE ID = " + m_id + ";");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public String toString() {
