@@ -24,6 +24,16 @@ public class JGraph implements Graph {
 
 	public JGraph() {
 		super();
+	
+		// DB 연결
+		DatabaseMgr dbMgr = DatabaseMgr.getInstance();
+		try {
+			dbMgr.initialize("3306", "0000");
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} 
+		
 		if (m_stmt == null) { // Statement Null 이면 DBMgr에서 가져옴
 			m_stmt = DatabaseMgr.getInstance().getStatement();
 		}

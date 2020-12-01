@@ -103,12 +103,9 @@ public class BasicPerformanceTest {
 	   }
 
 	   public static void main(String[] args) throws IOException, SQLException {
-	      DatabaseMgr dbMgr = DatabaseMgr.getInstance();
-	      dbMgr.initialize("3307", "1111");    
-	      
+	   
 	      Graph g = new JGraph();
-	      ((JGraph)g).setStatement(dbMgr.getStatement());
-
+	      
 	      long p = System.currentTimeMillis();
 	      //createGraph(g);
 	      System.out.println("Graph Creation (ms.): " + (System.currentTimeMillis() - p));
@@ -122,11 +119,11 @@ public class BasicPerformanceTest {
 	      System.out.println("g.getEdges (ms.): " + (System.currentTimeMillis() - p));
 
 	      p = System.currentTimeMillis();
-	      //getOutEdgesFromAllV(g);
+	      getOutEdgesFromAllV(g);
 	      System.out.println("v.getEdges(OUT) (ms.): " + (System.currentTimeMillis() - p));
 
 	      p = System.currentTimeMillis();
-	      //getInEdgesFromAllV(g);
+	      getInEdgesFromAllV(g);
 	      System.out.println("v.getEdges(IN) (ms.): " + (System.currentTimeMillis() - p));
 
 	      p = System.currentTimeMillis();
