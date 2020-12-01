@@ -74,16 +74,7 @@ public class UnitTest {
 	}
 
 	public static void main(String[] args) {
-		
-		// DB 연결
-		DatabaseMgr dbMgr = DatabaseMgr.getInstance();
-		try {
-			dbMgr.initialize("3307", "1111");
-		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} 
-		
+	
 		// 이름 교체하세요
 		Graph g = new JGraph();
 		try {
