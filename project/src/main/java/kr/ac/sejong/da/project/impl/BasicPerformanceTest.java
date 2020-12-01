@@ -122,11 +122,11 @@ public class BasicPerformanceTest {
 	      System.out.println("g.getEdges (ms.): " + (System.currentTimeMillis() - p));
 
 	      p = System.currentTimeMillis();
-	      //getOutEdgesFromAllV(g);
+	      getOutEdgesFromAllV(g);
 	      System.out.println("v.getEdges(OUT) (ms.): " + (System.currentTimeMillis() - p));
 
 	      p = System.currentTimeMillis();
-	      //getInEdgesFromAllV(g);
+	      getInEdgesFromAllV(g);
 	      System.out.println("v.getEdges(IN) (ms.): " + (System.currentTimeMillis() - p));
 
 	      p = System.currentTimeMillis();
