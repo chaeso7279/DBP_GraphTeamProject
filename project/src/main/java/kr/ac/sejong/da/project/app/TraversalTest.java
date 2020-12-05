@@ -14,7 +14,7 @@ import kr.ac.sejong.da.project.Graph;
 import kr.ac.sejong.da.project.Vertex;
 import kr.ac.sejong.da.project.impl.JGraph;
 
-public class ReducedTraversalTest {
+public class TraversalTest {
 
 	public static void createGraph(Graph g) throws IOException {
 		BufferedReader br = new BufferedReader(new FileReader("d:\\data.txt"));
@@ -25,8 +25,6 @@ public class ReducedTraversalTest {
 				break;
 			if (line.startsWith("#"))
 				continue;
-			if (cnt++ == 50000)
-				break;
 			String[] arr = line.split("\t");
 
 			Vertex vl = g.getVertex(arr[0]);
@@ -39,7 +37,7 @@ public class ReducedTraversalTest {
 			}
 
 			g.addEdge(vl, vr, "label");
-			System.out.println(cnt);
+			System.out.println(cnt++);
 		}
 		br.close();
 	}
@@ -54,10 +52,10 @@ public class ReducedTraversalTest {
 	 * 여러분의 결과에 따라, 퍼포먼스 경연때는 두 번내가 아닌 세 번내, 네 번내로 조정가능
              * 혹은 source vertices 를 특정할 수 있음 
 	 */
-	// 수정 가능한 부분 ~ 
+	// 수정 가능 ~
 	public static void getReachableVertices(Graph g) throws IOException {
 		
-		BufferedWriter w = new BufferedWriter(new FileWriter("d:\\rv(reduced).txt"));
+		BufferedWriter w = new BufferedWriter(new FileWriter("d:\\rv.txt"));
 		Iterator<Vertex> iter = g.getVertices().iterator();
 		while (iter.hasNext()) {
 			// 각 vertex에 대해 
@@ -78,16 +76,15 @@ public class ReducedTraversalTest {
                                    // 이 결과가 옳아야 함
 			System.out.println(v.toString() + " : " + rv.size());
 			w.write(v.toString() + " : " + rv.size() + "\n");
-
 		}
 		w.close();
-	}	// ~ 수정 가능한 부분
-	
+	} // ~ 수정 가능
+
 	public static void main(String[] args) throws IOException, SQLException {
 		Graph g = new JGraph();
 
 		long p = System.currentTimeMillis();
-		createGraph(g);
+		//createGraph(g);
 		System.out.println("Graph Creation (ms.): " + (System.currentTimeMillis() - p));
 
 		p = System.currentTimeMillis();
@@ -96,3 +93,4 @@ public class ReducedTraversalTest {
 		//RV (ms.): 93792
 	}
 }
+
