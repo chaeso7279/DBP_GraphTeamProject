@@ -1,4 +1,4 @@
-package kr.ac.sejong.da.project.impl;
+package kr.ac.sejong.da.project.app;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -12,6 +12,7 @@ import java.util.Iterator;
 import kr.ac.sejong.da.project.Direction;
 import kr.ac.sejong.da.project.Graph;
 import kr.ac.sejong.da.project.Vertex;
+import kr.ac.sejong.da.project.impl.JGraph;
 
 public class ReducedTraversalTest {
 
@@ -53,6 +54,7 @@ public class ReducedTraversalTest {
 	 * 여러분의 결과에 따라, 퍼포먼스 경연때는 두 번내가 아닌 세 번내, 네 번내로 조정가능
              * 혹은 source vertices 를 특정할 수 있음 
 	 */
+	// 수정 가능한 부분 ~ 
 	public static void getReachableVertices(Graph g) throws IOException {
 		
 		BufferedWriter w = new BufferedWriter(new FileWriter("c:\\rv.txt"));
@@ -79,8 +81,8 @@ public class ReducedTraversalTest {
 
 		}
 		w.close();
-	}
-
+	}	// ~ 수정 가능한 부분
+	
 	public static void main(String[] args) throws IOException, SQLException {
 		Graph g = new JGraph();
 

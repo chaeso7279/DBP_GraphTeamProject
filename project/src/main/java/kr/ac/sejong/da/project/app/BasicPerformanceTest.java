@@ -1,4 +1,4 @@
-package kr.ac.sejong.da.project.impl;
+package kr.ac.sejong.da.project.app;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -11,6 +11,7 @@ import kr.ac.sejong.da.project.Direction;
 import kr.ac.sejong.da.project.Edge;
 import kr.ac.sejong.da.project.Graph;
 import kr.ac.sejong.da.project.Vertex;
+import kr.ac.sejong.da.project.impl.JGraph;
 
 public class BasicPerformanceTest {
 

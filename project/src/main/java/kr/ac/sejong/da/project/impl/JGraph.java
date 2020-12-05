@@ -1,10 +1,5 @@
 package kr.ac.sejong.da.project.impl;
 
-import kr.ac.sejong.da.project.DatabaseMgr;
-import kr.ac.sejong.da.project.Edge;
-import kr.ac.sejong.da.project.Graph;
-import kr.ac.sejong.da.project.Vertex;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -13,6 +8,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.json.JSONObject;
+
+import kr.ac.sejong.da.project.DatabaseMgr;
+import kr.ac.sejong.da.project.Edge;
+import kr.ac.sejong.da.project.Graph;
+import kr.ac.sejong.da.project.Vertex;
 
 public class JGraph implements Graph {
 	// 쿼리문 사용하기 위해 가져옴
@@ -28,7 +28,8 @@ public class JGraph implements Graph {
 		// DB 연결
 		DatabaseMgr dbMgr = DatabaseMgr.getInstance();
 		try {
-			dbMgr.initialize("3306", "0000");
+			//dbMgr.initialize("3306", "0000");
+			dbMgr.initialize("3307", "1111");
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -36,6 +37,15 @@ public class JGraph implements Graph {
 		
 		if (m_stmt == null) { // Statement Null 이면 DBMgr에서 가져옴
 			m_stmt = DatabaseMgr.getInstance().getStatement();
+		}
+	}
+	
+	public void finalize() {
+		try {
+			DatabaseMgr.getInstance().release();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
