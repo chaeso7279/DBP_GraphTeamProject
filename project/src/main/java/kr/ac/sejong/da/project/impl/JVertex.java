@@ -1,6 +1,5 @@
 package kr.ac.sejong.da.project.impl;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -27,7 +26,7 @@ public class JVertex implements Vertex {
 	// 쿼리문 사용하기 위해 가져옴
 	private Statement m_stmt = null;
 
-	JVertex() {
+	public JVertex() {
 		super();
 		if (m_stmt == null) // Statement Null 이면 DBMgr에서 가져옴
 			m_stmt = DatabaseMgr.getInstance().getStatement();
@@ -121,9 +120,6 @@ public class JVertex implements Vertex {
 			e.printStackTrace();
 		}
 
-		if (result.isEmpty()) // 결과가 없을 경우, null 반환
-			return null;
-
 		return result;
 	}
 
@@ -194,9 +190,6 @@ public class JVertex implements Vertex {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		if (result.isEmpty()) // 결과가 없을 경우, null 반환
-			return null;
 
 		return result;
 	}

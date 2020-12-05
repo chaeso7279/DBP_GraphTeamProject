@@ -60,14 +60,16 @@ public class TraversalTest {
 		while (iter.hasNext()) {
 			// 각 vertex에 대해 
 			Vertex v = iter.next();
-                                   HashSet<String> rv = new HashSet<String>();	
-        // 두 번 이내의 Direction.OUT 으로 도달할 수 있는 vertices의 id를 구하기 
-					
+			HashSet<String> rv = new HashSet<String>();	
+			
+			// 두 번 이내의 Direction.OUT 으로 도달할 수 있는 vertices의 id를 구하기 		
 			Iterator<Vertex> vi = v.getVertices(Direction.OUT, "label").iterator();
 			while(vi.hasNext()) {
 				Vertex ov = vi.next();
 				rv.add(ov.getId().toString());
+				
 				Iterator<Vertex> vi2 = ov.getVertices(Direction.OUT, "label").iterator();
+				
 				while(vi2.hasNext()) {
 					Vertex ov2 = vi2.next();
 					rv.add(ov2.getId().toString());
