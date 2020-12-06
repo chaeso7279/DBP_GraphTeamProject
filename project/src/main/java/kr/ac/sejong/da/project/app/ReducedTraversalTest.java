@@ -87,7 +87,7 @@ public class ReducedTraversalTest {
 		Graph g = new JGraph();
 
 		long p = System.currentTimeMillis();
-		//createGraph(g);
+		createGraph(g);
 		System.out.println("Graph Creation (ms.): " + (System.currentTimeMillis() - p));
 
 		p = System.currentTimeMillis();
