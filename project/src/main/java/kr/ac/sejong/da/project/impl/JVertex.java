@@ -51,11 +51,11 @@ public class JVertex implements Vertex {
 	public Iterable<Edge> getEdges(Direction direction, String... labels) { // 채수화
 		// SQL 구문 실행
 		String sql = "";
-		
-		if(direction == Direction.IN) 
-			sql = "SELECT * FROM Edges WHERE InV = " + m_id; 
-		else 
+
+		if(direction == Direction.OUT) 
 			sql = "SELECT * FROM Edges WHERE OutV = " + m_id;
+		else
+			sql = "SELECT * FROM Edges WHERE InV = " + m_id; 
 		
 		// labels 개수: 0 ~ 여러개
 		if(labels.length <= 0) // labels 인자가 들어오지 않음
@@ -74,21 +74,6 @@ public class JVertex implements Vertex {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		// prepared statement 버전 (향상 효과 없었음)
-		/*
-			 * if (direction == Direction.IN) sql =
-			 * "SELECT * FROM Edges WHERE InV = (?) AND Label = (?);"; else sql =
-			 * "SELECT * FROM Edges WHERE OutV = (?) AND Label = (?);";
-			 * 
-			 * PreparedStatement pStmt =
-			 * DatabaseMgr.getInstance().getConnection().prepareStatement(sql);
-			 * pStmt.setInt(1, Integer.parseInt(m_id)); pStmt.setString(2, labels[0]);
-			 * 
-			 * ResultSet rs = pStmt.executeQuery();
-			 */
-
-		
 		
 		// 결과 담을 리스트 생성
 		List<Edge> result = new ArrayList<Edge>();
@@ -127,10 +112,11 @@ public class JVertex implements Vertex {
 	public Iterable<Vertex> getVertices(Direction direction, String... labels) { // 채수화
 		String sql = "";
 		
-		if(direction == Direction.IN) 
-			sql =	"SELECT OutV, Properties FROM Edges WHERE InV = " + m_id;
-		else if(direction == Direction.OUT) 
+		if(direction == Direction.OUT) 
 			sql = "SELECT InV, Properties FROM Edges WHERE OutV = " + m_id;
+		else 
+			sql = "SELECT OutV, Properties FROM Edges WHERE InV = " + m_id;
+		
 
 		// labels 개수: 0 ~ 여러개
 		if(labels.length <= 0) // labels 인자가 들어오지 않음 
@@ -151,18 +137,7 @@ public class JVertex implements Vertex {
 			e.printStackTrace();
 		}
 
-		// prepared statement 버전 (향상 효과 없었음)
-//		if (direction == Direction.IN)
-//			sql = "SELECT OutV, Properties FROM Edges WHERE InV = (?) AND Label = (?);";
-//		else
-//			sql = "SELECT InV, Properties FROM Edges WHERE OutV = (?) AND Label = (?);";
-//
-//		PreparedStatement pStmt = DatabaseMgr.getInstance().getConnection().prepareStatement(sql);
-//		pStmt.setInt(1, Integer.parseInt(m_id));
-//		pStmt.setString(2, labels[0]);
-//
-//		ResultSet rs = pStmt.executeQuery();
-		
+
 		// 결과 담을 리스트 생성
 		List<Vertex> result = new ArrayList<Vertex>();
 
