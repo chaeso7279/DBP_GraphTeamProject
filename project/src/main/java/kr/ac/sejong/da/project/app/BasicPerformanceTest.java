@@ -16,7 +16,7 @@ import kr.ac.sejong.da.project.impl.JGraph;
 public class BasicPerformanceTest {
 
 	   public static void createGraph(Graph g) throws IOException {
-	      BufferedReader br = new BufferedReader(new FileReader("D:\\dbp_data\\data.txt"));
+	      BufferedReader br = new BufferedReader(new FileReader("d:\\data.txt"));
 	      int i=0;
 	      while (true) {
 	         String line = br.readLine();
@@ -108,7 +108,7 @@ public class BasicPerformanceTest {
 	      Graph g = new JGraph();
 	      
 	      long p = System.currentTimeMillis();
-	      //createGraph(g);
+	      createGraph(g);
 	      System.out.println("Graph Creation (ms.): " + (System.currentTimeMillis() - p));
 
 	      p = System.currentTimeMillis();

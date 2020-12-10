@@ -80,7 +80,7 @@ public class JVertex implements Vertex {
 
 		try {
 			while (rs.next()) {
-				// 가져온 결과가 null 일 경우 처리 해줘야함(인덱싱?)
+				
 				String outV = rs.getString(1);
 				String inV = rs.getString(2);
 				String label = rs.getString(3);
@@ -143,7 +143,6 @@ public class JVertex implements Vertex {
 
 		try {
 			while (rs.next()) {
-				// 가져온 결과가 null 일 경우 처리 해줘야함(인덱싱?)
 				String id = rs.getString(1);
 				String prop = rs.getString(2);
 
@@ -171,30 +170,26 @@ public class JVertex implements Vertex {
 
 	@Override // 현재 버텍스가 OutV, 인자가 InV에 해당하는 Edge 추가
 	public Edge addEdge(String label, Vertex inVertex) { // 채수화
-		int outID = Integer.parseInt(m_id);
-		int inID = Integer.parseInt((String) inVertex.getId());
-		System.out.println("dd : " + inID);
-
 		// DB 삽입
-		String sql = "INSERT INTO Edges SET OutV = " + outID + ", InV = " + inID + ", Label = \"" + label + "\";";
+		String sql = "INSERT INTO Edges SET OutV = " + m_id + ", InV = " + inVertex.getId() + ", Label = \"" + label + "\";";
 		try {
-			if (0 == m_stmt.executeUpdate(sql)) // 삽입 오류 발생 시(중복 등),
-				return null;
+			m_stmt.executeUpdate(sql); 
+			// Edge 객체 생성
+			Edge eTemp = new JEdge();
+			((JEdge) eTemp).setID(m_id, (String) inVertex.getId(), label);
+
+			return eTemp;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} // null 반환
+		} 
 
-		// Edge 객체 생성
-		Edge eTemp = new JEdge();
-		((JEdge) eTemp).setID(m_id, (String) inVertex.getId(), label);
-
-		return eTemp;
+		// null 반환
+		return null;
 	}
 
 	@Override
 	public Object getProperty(String key) { // 채수화
-
 		String sql = "SELECT JSON_VALUE(Properties, '$." + key + "') FROM Vertices WHERE ID = " + m_id
 				+ " AND NOT Properties IS NULL;";
 		ResultSet rs = null;
@@ -211,7 +206,6 @@ public class JVertex implements Vertex {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return null;
 		}
 
 		try {
@@ -219,8 +213,8 @@ public class JVertex implements Vertex {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return null;
 		}
+		return null;
 	}
 
 	@Override
@@ -247,18 +241,20 @@ public class JVertex implements Vertex {
 		JSONArray arrKeys = null;
 		try {
 			arrKeys = new JSONArray(rs.getString(1));
+			
+			HashSet<String> setKeys = new HashSet<String>();
+
+			for (int i = 0; i < arrKeys.length(); ++i)
+				setKeys.add(arrKeys.getString(i));
+
+			return setKeys;
+			
 		} catch (JSONException | SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
+			e.printStackTrace();			
 		}
 		
-		HashSet<String> setKeys = new HashSet<String>();
-
-		for (int i = 0; i < arrKeys.length(); ++i)
-			setKeys.add(arrKeys.getString(i));
-
-		return setKeys;
+		return null;
 	}
 
 	@Override // 기존 property 유지하면서 추가, key 중복 시 value 업데이트

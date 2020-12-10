@@ -22,7 +22,7 @@ import kr.ac.sejong.da.project.Vertex;
 public class JGraph implements Graph {
 	// 쿼리문 사용하기 위해 가져옴
 	private Statement m_stmt = null;
-
+	
 	public void setStatement(Statement stmt) {
 		m_stmt = stmt;
 	}
@@ -143,7 +143,6 @@ public class JGraph implements Graph {
 
 	@Override // 현재 db에 존재하는 vertex중, 특정 key와 value를 가지는 vertex 반환
 	public Iterable<Vertex> getVertices(String key, Object value) { // 손혜원
-
 		try {
 			ResultSet rs = m_stmt.executeQuery("SELECT ID, JSON_VALUE(Properties,'$." + key + "')"
 					+  "FROM vertices WHERE Properties IS NOT NULL;");
