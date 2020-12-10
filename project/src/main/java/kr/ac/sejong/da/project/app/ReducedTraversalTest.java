@@ -53,34 +53,36 @@ public class ReducedTraversalTest {
 	 * 
 	 * 여러분의 결과에 따라, 퍼포먼스 경연때는 두 번내가 아닌 세 번내, 네 번내로 조정가능
              * 혹은 source vertices 를 특정할 수 있음 
+	 * @throws SQLException 
 	 */
 	// 수정 가능한 부분 ~ 
-	public static void getReachableVertices(Graph g) throws IOException {
+	public static void getReachableVertices(Graph g) throws IOException, SQLException {
 		
-		BufferedWriter w = new BufferedWriter(new FileWriter("d:\\rv(reduced).txt"));
-		Iterator<Vertex> iter = g.getVertices().iterator();
-		while (iter.hasNext()) {
-			// 각 vertex에 대해 
-			Vertex v = iter.next();
-                                   HashSet<String> rv = new HashSet<String>();	
-        // 두 번 이내의 Direction.OUT 으로 도달할 수 있는 vertices의 id를 구하기 
-					
-			Iterator<Vertex> vi = v.getVertices(Direction.OUT, "label").iterator();
-			while(vi.hasNext()) {
-				Vertex ov = vi.next();
-				rv.add(ov.getId().toString());
-				Iterator<Vertex> vi2 = ov.getVertices(Direction.OUT, "label").iterator();
-				while(vi2.hasNext()) {
-					Vertex ov2 = vi2.next();
-					rv.add(ov2.getId().toString());
-				}
-			}
-                                   // 이 결과가 옳아야 함
-			System.out.println(v.toString() + " : " + rv.size());
-			w.write(v.toString() + " : " + rv.size() + "\n");
-
-		}
-		w.close();
+//		BufferedWriter w = new BufferedWriter(new FileWriter("d:\\rv(reduced).txt"));
+//		Iterator<Vertex> iter = g.getVertices().iterator();
+//		while (iter.hasNext()) {
+//			// 각 vertex에 대해 
+//			Vertex v = iter.next();
+//			HashSet<String> rv = new HashSet<String>();	
+//			
+//			// 두 번 이내의 Direction.OUT 으로 도달할 수 있는 vertices의 id를 구하기 		
+//			Iterator<Vertex> vi = v.getVertices(Direction.OUT, "label").iterator();
+//			while(vi.hasNext()) {
+//				Vertex ov = vi.next();
+//				rv.add(ov.getId().toString());
+//				Iterator<Vertex> vi2 = ov.getVertices(Direction.OUT, "label").iterator();
+//				while(vi2.hasNext()) {
+//					Vertex ov2 = vi2.next();
+//					rv.add(ov2.getId().toString());
+//				}
+//			}
+//                                   // 이 결과가 옳아야 함
+//			System.out.println(v.toString() + " : " + rv.size());
+//			w.write(v.toString() + " : " + rv.size() + "\n");
+//
+//		}
+//		w.close();
+		((JGraph)g).getReachableVertices();
 	}	// ~ 수정 가능한 부분
 	
 	public static void main(String[] args) throws IOException, SQLException {
