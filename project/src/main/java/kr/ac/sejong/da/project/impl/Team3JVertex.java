@@ -13,12 +13,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import kr.ac.sejong.da.project.DatabaseMgr;
+import kr.ac.sejong.da.project.Team3DBMgr;
 import kr.ac.sejong.da.project.Direction;
 import kr.ac.sejong.da.project.Edge;
 import kr.ac.sejong.da.project.Vertex;
 
-public class JVertex implements Vertex {
+public class Team3JVertex implements Vertex {
 
 	// 예: string 형태의 고유 아이디, '|' 사용 금지
 	private String m_id; // DB에서는 INT형
@@ -26,10 +26,10 @@ public class JVertex implements Vertex {
 	// 쿼리문 사용하기 위해 가져옴
 	private Statement m_stmt = null;
 
-	public JVertex() {
+	public Team3JVertex() {
 		super();
 		if (m_stmt == null) // Statement Null 이면 DBMgr에서 가져옴
-			m_stmt = DatabaseMgr.getInstance().getStatement();
+			m_stmt = Team3DBMgr.getInstance().getStatement();
 	}
 
 	// setter
@@ -86,8 +86,8 @@ public class JVertex implements Vertex {
 				String label = rs.getString(3);
 				String prop = rs.getString(4);
 
-				Edge eTemp = new JEdge();
-				((JEdge) eTemp).setID(outV, inV, label);
+				Edge eTemp = new Team3JEdge();
+				((Team3JEdge) eTemp).setID(outV, inV, label);
 
 				if (prop != null) { // property가 null 아닐 때
 					JSONObject jObj = new JSONObject(prop); // 라이브러리 사용
@@ -146,8 +146,8 @@ public class JVertex implements Vertex {
 				String id = rs.getString(1);
 				String prop = rs.getString(2);
 
-				Vertex vTemp = new JVertex();
-				((JVertex) vTemp).setID(id);
+				Vertex vTemp = new Team3JVertex();
+				((Team3JVertex) vTemp).setID(id);
 
 				if (prop != null) { // property가 null 아닐 때
 					JSONObject jObj = new JSONObject(prop); // 라이브러리 사용
@@ -175,8 +175,8 @@ public class JVertex implements Vertex {
 		try {
 			m_stmt.executeUpdate(sql); 
 			// Edge 객체 생성
-			Edge eTemp = new JEdge();
-			((JEdge) eTemp).setID(m_id, (String) inVertex.getId(), label);
+			Edge eTemp = new Team3JEdge();
+			((Team3JEdge) eTemp).setID(m_id, (String) inVertex.getId(), label);
 
 			return eTemp;
 		} catch (SQLException e) {

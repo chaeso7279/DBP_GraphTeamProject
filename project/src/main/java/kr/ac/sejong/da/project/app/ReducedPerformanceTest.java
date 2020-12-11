@@ -10,7 +10,7 @@ import kr.ac.sejong.da.project.Direction;
 import kr.ac.sejong.da.project.Edge;
 import kr.ac.sejong.da.project.Graph;
 import kr.ac.sejong.da.project.Vertex;
-import kr.ac.sejong.da.project.impl.JGraph;
+import kr.ac.sejong.da.project.impl.Team3JGraph;
 
 public class ReducedPerformanceTest {
 
@@ -105,7 +105,7 @@ public class ReducedPerformanceTest {
 	}
 
 	public static void main(String[] args) throws IOException, SQLException {
-		Graph g = new JGraph();
+		Graph g = new Team3JGraph();
 
 		long p = System.currentTimeMillis();
 		createGraph(g);

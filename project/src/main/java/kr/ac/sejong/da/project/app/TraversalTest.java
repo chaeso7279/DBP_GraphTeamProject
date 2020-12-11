@@ -11,7 +11,7 @@ import java.util.Iterator;
 
 import kr.ac.sejong.da.project.Graph;
 import kr.ac.sejong.da.project.Vertex;
-import kr.ac.sejong.da.project.impl.JGraph;
+import kr.ac.sejong.da.project.impl.Team3JGraph;
 
 public class TraversalTest {
 
@@ -62,7 +62,7 @@ public class TraversalTest {
 			Vertex v = iter.next();
 			HashSet<String> rv = new HashSet<String>();
 			// 수정 가능한 부분 ~ 
-			((JGraph)g).getReachableVertices(v, rv);
+			((Team3JGraph)g).getReachableVertices(v, rv);
 			// ~ 수정 가능한 부분
 			
 			System.out.println(v.toString() + " : " + rv.size());
@@ -73,7 +73,7 @@ public class TraversalTest {
 	} 
 
 	public static void main(String[] args) throws IOException, SQLException {
-		Graph g = new JGraph();
+		Graph g = new Team3JGraph();
 
 		long p = System.currentTimeMillis();
 		createGraph(g);

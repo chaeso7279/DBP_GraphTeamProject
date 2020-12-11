@@ -1,7 +1,5 @@
 package kr.ac.sejong.da.project.impl;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -9,15 +7,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import kr.ac.sejong.da.project.DatabaseMgr;
+import kr.ac.sejong.da.project.Team3DBMgr;
 import kr.ac.sejong.da.project.Direction;
 import kr.ac.sejong.da.project.Edge;
 import kr.ac.sejong.da.project.Vertex;
 
-public class JEdge implements Edge {
+public class Team3JEdge implements Edge {
 
 	// OutV,inV,label 전역변수 설정
 	public int out, in;
@@ -25,11 +22,11 @@ public class JEdge implements Edge {
 
 	private Statement m_stmt = null;
 
-	JEdge() {
+	Team3JEdge() {
 		super();
 
 		if (m_stmt == null)
-			m_stmt = DatabaseMgr.getInstance().getStatement();
+			m_stmt = Team3DBMgr.getInstance().getStatement();
 	}
 
 	// setter
@@ -50,13 +47,13 @@ public class JEdge implements Edge {
 	// from vertices; 를씀
 	public Vertex getVertex(Direction direction) { // Vertex가져와서 반환하는 메소드
 		// 없으면 NULL
-		Vertex vertex = new JVertex();
+		Vertex vertex = new Team3JVertex();
 		
 		if (direction == Direction.IN) {
-			((JVertex) vertex).setID(String.valueOf(in));
+			((Team3JVertex) vertex).setID(String.valueOf(in));
 		}
 		else if (direction == Direction.OUT) {
-			((JVertex) vertex).setID(String.valueOf(out));
+			((Team3JVertex) vertex).setID(String.valueOf(out));
 		}
 		
 		return vertex;

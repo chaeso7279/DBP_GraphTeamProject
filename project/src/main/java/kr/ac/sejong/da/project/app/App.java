@@ -3,13 +3,13 @@ package kr.ac.sejong.da.project.app;
 import java.sql.SQLException;
 import java.util.Iterator;
 
-import kr.ac.sejong.da.project.DatabaseMgr;
+import kr.ac.sejong.da.project.Team3DBMgr;
 import kr.ac.sejong.da.project.Direction;
 import kr.ac.sejong.da.project.Edge;
 import kr.ac.sejong.da.project.Graph;
 import kr.ac.sejong.da.project.Vertex;
-import kr.ac.sejong.da.project.impl.JGraph;
-import kr.ac.sejong.da.project.impl.JVertex;
+import kr.ac.sejong.da.project.impl.Team3JGraph;
+import kr.ac.sejong.da.project.impl.Team3JVertex;
 
 public class App {
 	public static void main(String[] args) throws SQLException {
@@ -20,7 +20,7 @@ public class App {
 		//Vertex v = new JVertex();
 		//v.setStatement(dbMgr.getStatement());
 		
-		Graph g = new JGraph();
+		Graph g = new Team3JGraph();
         Vertex v1 = g.addVertex("1");
         Vertex v2 = g.addVertex("2");
         Vertex v3 = g.addVertex("3");
@@ -60,6 +60,6 @@ public class App {
 		e1.getProperty("x"); // edge Property값 가져오기
 		e2.getPropertyKeys(); //edge Property의 key 값 가져오기
 		
-		DatabaseMgr.getInstance().release();
+		Team3DBMgr.getInstance().release();
 	}
 }

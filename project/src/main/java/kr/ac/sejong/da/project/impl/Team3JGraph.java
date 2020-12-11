@@ -11,12 +11,12 @@ import java.util.List;
 
 import org.json.JSONObject;
 
-import kr.ac.sejong.da.project.DatabaseMgr;
+import kr.ac.sejong.da.project.Team3DBMgr;
 import kr.ac.sejong.da.project.Edge;
 import kr.ac.sejong.da.project.Graph;
 import kr.ac.sejong.da.project.Vertex;
 
-public class JGraph implements Graph {
+public class Team3JGraph implements Graph {
 	// 쿼리문 사용하기 위해 가져옴
 	private Statement m_stmt = null;
 	
@@ -24,13 +24,13 @@ public class JGraph implements Graph {
 		m_stmt = stmt;
 	}
 
-	public JGraph() {
+	public Team3JGraph() {
 		super();
 	
 		// DB 연결
-		DatabaseMgr dbMgr = DatabaseMgr.getInstance();
+		Team3DBMgr dbMgr = Team3DBMgr.getInstance();
 		try {
-			//dbMgr.initialize("3306", "0000");
+			//dbMgr.initialize("3306", "1234");
 			dbMgr.initialize("3307", "1111");
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
@@ -38,13 +38,13 @@ public class JGraph implements Graph {
 		} 
 		
 		if (m_stmt == null) { // Statement Null 이면 DBMgr에서 가져옴
-			m_stmt = DatabaseMgr.getInstance().getStatement();
+			m_stmt = Team3DBMgr.getInstance().getStatement();
 		}
 	}
 	
 	public void finalize() {
 		try {
-			DatabaseMgr.getInstance().release();
+			Team3DBMgr.getInstance().release();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -57,7 +57,7 @@ public class JGraph implements Graph {
         	int intID = Integer.parseInt(id);
         	m_stmt.executeUpdate("INSERT INTO vertices SET ID=" + intID + ";");
         	
-        	JVertex v = new JVertex();
+        	Team3JVertex v = new Team3JVertex();
         	v.setID(id); //id만 세팅
         	
           	return v;
@@ -77,7 +77,7 @@ public class JGraph implements Graph {
 				return null;
 			}
 			
-			JVertex v = new JVertex();
+			Team3JVertex v = new Team3JVertex();
 			v.setID(id);
 			
 			while (rs.next()) {
@@ -111,7 +111,7 @@ public class JGraph implements Graph {
 			List<Vertex> vertexData = new ArrayList<Vertex>();
 
 			while (rs.next()) {
-				JVertex v = new JVertex();
+				Team3JVertex v = new Team3JVertex();
 				String id = rs.getString(1);
 				String line = rs.getString(2); //vertex의 property를 받아옴
 				
@@ -147,14 +147,14 @@ public class JGraph implements Graph {
 			List<Vertex> vertexData = new ArrayList<Vertex>();
 
 			while (rs.next()) {
-				JVertex v = new JVertex();
+				Team3JVertex v = new Team3JVertex();
 				String id = rs.getString(1);
 				String line = rs.getString(2);
 				
 				v.setID(id); 
 
 				if(line!=null && line.equals(value.toString())) { //NullPointerException 오류 처리
-					v = (JVertex) this.getVertex(id);
+					v = (Team3JVertex) this.getVertex(id);
 					vertexData.add(v);
 				}
 			}
@@ -170,7 +170,7 @@ public class JGraph implements Graph {
 	public Edge addEdge(Vertex outVertex, Vertex inVertex, String label) { // 김현모
 		Object outID = outVertex.getId();
 		Object inID = inVertex.getId();
-		JEdge edge = new JEdge();
+		Team3JEdge edge = new Team3JEdge();
 
 		try {
 			m_stmt.executeUpdate("INSERT INTO edges SET OutV=" + outID + ", InV=" + inID + ",Label='" + label + "';");
@@ -189,7 +189,7 @@ public class JGraph implements Graph {
 		ResultSet rs;
 		Object outID = outVertex.getId();
 		Object inID = inVertex.getId();
-		JEdge edge = new JEdge();
+		Team3JEdge edge = new Team3JEdge();
 
 		try {
 			rs = m_stmt.executeQuery("SELECT * FROM edges " + "WHERE OutV=" + outID + " and " + "InV=" + inID + " and "
@@ -217,7 +217,7 @@ public class JGraph implements Graph {
 				String outID = rs.getString(1);
 				String inID = rs.getString(2);
 				String label = rs.getString(3);
-				JEdge e = new JEdge();
+				Team3JEdge e = new Team3JEdge();
 				e.setID(outID, inID, label);
 				edgeData.add(e);
 			}
@@ -238,7 +238,7 @@ public class JGraph implements Graph {
 				String outID = rs.getString(1);
 				String inID = rs.getString(2);
 				String label = rs.getString(3);
-				JEdge e = new JEdge();
+				Team3JEdge e = new Team3JEdge();
 				e.setID(outID, inID, label);
 				edgeData.add(e);
 			}
@@ -253,7 +253,7 @@ public class JGraph implements Graph {
 	public void getReachableVertices(Vertex v, HashSet<String> rv) throws SQLException {
 
 		String sql = "WITH RECURSIVE CTE AS ( SELECT InV, OutV FROM Edges WHERE OutV = (?) UNION SELECT a.InV, a.OutV FROM Edges a INNER JOIN CTE b ON a.OutV = b.InV) SELECT DISTINCT InV FROM CTE;";
-		PreparedStatement pstmt = DatabaseMgr.getInstance().getConnection().prepareStatement(sql);
+		PreparedStatement pstmt = Team3DBMgr.getInstance().getConnection().prepareStatement(sql);
 		pstmt.setInt(1, Integer.parseInt((String) v.getId()));
 			
 		ResultSet rs = pstmt.executeQuery();

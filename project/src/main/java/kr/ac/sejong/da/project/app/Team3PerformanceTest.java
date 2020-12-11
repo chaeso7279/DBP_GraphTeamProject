@@ -6,14 +6,14 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Iterator;
 
-import kr.ac.sejong.da.project.DatabaseMgr;
+import kr.ac.sejong.da.project.Team3DBMgr;
 import kr.ac.sejong.da.project.Direction;
 import kr.ac.sejong.da.project.Edge;
 import kr.ac.sejong.da.project.Graph;
 import kr.ac.sejong.da.project.Vertex;
-import kr.ac.sejong.da.project.impl.JGraph;
+import kr.ac.sejong.da.project.impl.Team3JGraph;
 
-public class BasicPerformanceTest {
+public class Team3PerformanceTest {
 
 	   public static void createGraph(Graph g) throws IOException {
 	      BufferedReader br = new BufferedReader(new FileReader("d:\\data.txt"));
@@ -105,7 +105,7 @@ public class BasicPerformanceTest {
 
 	   public static void main(String[] args) throws IOException, SQLException {
 	   
-	      Graph g = new JGraph();
+	      Graph g = new Team3JGraph();
 	      
 	      long p = System.currentTimeMillis();
 	      createGraph(g);

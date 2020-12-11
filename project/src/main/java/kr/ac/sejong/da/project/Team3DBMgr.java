@@ -6,7 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class DatabaseMgr {
+public class Team3DBMgr {
 	
 	// db 관련 변수
 	Connection m_connection = null;
@@ -45,13 +45,13 @@ public class DatabaseMgr {
 	}
 	
 	// 싱글톤 
-	private static DatabaseMgr m_instance;
+	private static Team3DBMgr m_instance;
 	
-	private DatabaseMgr() {};
+	private Team3DBMgr() {};
 	
-	public static DatabaseMgr getInstance() {	// 채수화
+	public static Team3DBMgr getInstance() {	// 채수화
 		if(m_instance == null) 
-			m_instance = new DatabaseMgr();
+			m_instance = new Team3DBMgr();
 			
 		return m_instance;
 	}
