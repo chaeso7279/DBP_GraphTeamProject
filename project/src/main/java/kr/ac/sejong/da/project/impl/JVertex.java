@@ -86,8 +86,8 @@ public class JVertex implements Vertex {
 				String label = rs.getString(3);
 				String prop = rs.getString(4);
 
-				Edge eTemp = new JEdge();
-				((JEdge) eTemp).setID(outV, inV, label);
+				Edge eTemp = new Team3JEdge();
+				((Team3JEdge) eTemp).setID(outV, inV, label);
 
 				if (prop != null) { // property가 null 아닐 때
 					JSONObject jObj = new JSONObject(prop); // 라이브러리 사용
@@ -175,8 +175,8 @@ public class JVertex implements Vertex {
 		try {
 			m_stmt.executeUpdate(sql); 
 			// Edge 객체 생성
-			Edge eTemp = new JEdge();
-			((JEdge) eTemp).setID(m_id, (String) inVertex.getId(), label);
+			Edge eTemp = new Team3JEdge();
+			((Team3JEdge) eTemp).setID(m_id, (String) inVertex.getId(), label);
 
 			return eTemp;
 		} catch (SQLException e) {

@@ -17,7 +17,7 @@ import kr.ac.sejong.da.project.Direction;
 import kr.ac.sejong.da.project.Edge;
 import kr.ac.sejong.da.project.Vertex;
 
-public class JEdge implements Edge {
+public class Team3JEdge implements Edge {
 
 	// OutV,inV,label 전역변수 설정
 	public int out, in;
@@ -25,7 +25,7 @@ public class JEdge implements Edge {
 
 	private Statement m_stmt = null;
 
-	JEdge() {
+	Team3JEdge() {
 		super();
 
 		if (m_stmt == null)

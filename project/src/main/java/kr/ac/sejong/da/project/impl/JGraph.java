@@ -170,7 +170,7 @@ public class JGraph implements Graph {
 	public Edge addEdge(Vertex outVertex, Vertex inVertex, String label) { // 김현모
 		Object outID = outVertex.getId();
 		Object inID = inVertex.getId();
-		JEdge edge = new JEdge();
+		Team3JEdge edge = new Team3JEdge();
 
 		try {
 			m_stmt.executeUpdate("INSERT INTO edges SET OutV=" + outID + ", InV=" + inID + ",Label='" + label + "';");
@@ -189,7 +189,7 @@ public class JGraph implements Graph {
 		ResultSet rs;
 		Object outID = outVertex.getId();
 		Object inID = inVertex.getId();
-		JEdge edge = new JEdge();
+		Team3JEdge edge = new Team3JEdge();
 
 		try {
 			rs = m_stmt.executeQuery("SELECT * FROM edges " + "WHERE OutV=" + outID + " and " + "InV=" + inID + " and "
@@ -217,7 +217,7 @@ public class JGraph implements Graph {
 				String outID = rs.getString(1);
 				String inID = rs.getString(2);
 				String label = rs.getString(3);
-				JEdge e = new JEdge();
+				Team3JEdge e = new Team3JEdge();
 				e.setID(outID, inID, label);
 				edgeData.add(e);
 			}
@@ -238,7 +238,7 @@ public class JGraph implements Graph {
 				String outID = rs.getString(1);
 				String inID = rs.getString(2);
 				String label = rs.getString(3);
-				JEdge e = new JEdge();
+				Team3JEdge e = new Team3JEdge();
 				e.setID(outID, inID, label);
 				edgeData.add(e);
 			}
