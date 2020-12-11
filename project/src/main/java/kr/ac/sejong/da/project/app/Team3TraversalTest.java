@@ -13,7 +13,7 @@ import kr.ac.sejong.da.project.Graph;
 import kr.ac.sejong.da.project.Vertex;
 import kr.ac.sejong.da.project.impl.Team3JGraph;
 
-public class TraversalTest {
+public class Team3TraversalTest {
 
 	public static void createGraph(Graph g) throws IOException {
 		BufferedReader br = new BufferedReader(new FileReader("d:\\data.txt"));
