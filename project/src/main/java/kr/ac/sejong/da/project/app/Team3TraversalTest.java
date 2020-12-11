@@ -24,7 +24,6 @@ public class Team3TraversalTest {
 				break;
 			if (line.startsWith("#"))
 				continue;
-			
 			String[] arr = line.split("\t");
 
 			Vertex vl = g.getVertex(arr[0]);
@@ -37,10 +36,11 @@ public class Team3TraversalTest {
 			}
 
 			g.addEdge(vl, vr, "label");
-			System.out.println(cnt);
+			System.out.println(cnt++);
 		}
 		br.close();
 	}
+
 
 	/**
 	 * 아래의 코드는 아마 동작할 것임 하지만 수정가능 (물론 같은 결과를 출력해야 함)
