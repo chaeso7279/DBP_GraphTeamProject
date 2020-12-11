@@ -1,9 +1,13 @@
 package kr.ac.sejong.da.project.app;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.HashSet;
+import java.util.Iterator;
 
 import kr.ac.sejong.da.project.Graph;
 import kr.ac.sejong.da.project.Vertex;
@@ -20,8 +24,7 @@ public class TraversalTest {
 				break;
 			if (line.startsWith("#"))
 				continue;
-			if (cnt++ == 50000)
-				break;
+			
 			String[] arr = line.split("\t");
 
 			Vertex vl = g.getVertex(arr[0]);
@@ -50,11 +53,24 @@ public class TraversalTest {
              * 혹은 source vertices 를 특정할 수 있음 
 	 * @throws SQLException 
 	 */
-	// 수정 가능 ~
+	
 	public static void getReachableVertices(Graph g) throws IOException, SQLException {
-		
-		((JGraph)g).getReachableVertices();
-	} // ~ 수정 가능
+		BufferedWriter w = new BufferedWriter(new FileWriter("d:\\rv.txt"));
+		Iterator<Vertex> iter = g.getVertices().iterator();
+		while(iter.hasNext()) {
+			// 각 vertex에 대해
+			Vertex v = iter.next();
+			HashSet<String> rv = new HashSet<String>();
+			// 수정 가능한 부분 ~ 
+			((JGraph)g).getReachableVertices(v, rv);
+			// ~ 수정 가능한 부분
+			
+			System.out.println(v.toString() + " : " + rv.size());
+			w.write(v.toString() + " : " + rv.size() + "\n");
+
+		}
+		w.close();
+	} 
 
 	public static void main(String[] args) throws IOException, SQLException {
 		Graph g = new JGraph();

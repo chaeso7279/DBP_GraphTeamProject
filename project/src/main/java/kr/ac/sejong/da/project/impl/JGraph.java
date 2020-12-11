@@ -1,8 +1,5 @@
 package kr.ac.sejong.da.project.impl;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -253,26 +250,15 @@ public class JGraph implements Graph {
 		return null;
 	}
 	
-	public void getReachableVertices() throws SQLException, IOException {
+	public void getReachableVertices(Vertex v, HashSet<String> rv) throws SQLException {
 
-		BufferedWriter w = new BufferedWriter(new FileWriter("d:\\rv(reduced).txt"));
-		
-		String sql = "WITH RECURSIVE CTE AS ( SELECT InV, OutV FROM Edges WHERE OutV = (?) UNION SELECT a.InV, a.OutV FROM Edges a INNER JOIN CTE b ON a.OutV = b.InV) SELECT COUNT(DISTINCT InV) FROM CTE;";
+		String sql = "WITH RECURSIVE CTE AS ( SELECT InV, OutV FROM Edges WHERE OutV = (?) UNION SELECT a.InV, a.OutV FROM Edges a INNER JOIN CTE b ON a.OutV = b.InV) SELECT DISTINCT InV FROM CTE;";
 		PreparedStatement pstmt = DatabaseMgr.getInstance().getConnection().prepareStatement(sql);
-		
-		Iterator<Vertex> iter = getVertices().iterator();
-		while (iter.hasNext()) {
-			// 각 vertex에 대해 
-			Vertex v = iter.next();
-	
-			pstmt.setInt(1, Integer.parseInt((String) v.getId()));
+		pstmt.setInt(1, Integer.parseInt((String) v.getId()));
 			
-			ResultSet rs = pstmt.executeQuery();
-			if(rs.next()) {
-				System.out.println(v.toString() + " : " + rs.getInt(1));
-				w.write(v.toString() + " : " + rs.getInt(1) + "\n");
-			}		
-		}
-		w.close();
+		ResultSet rs = pstmt.executeQuery();
+		while(rs.next()) 
+				rv.add(rs.getString(1));
+			
 	}
 }
